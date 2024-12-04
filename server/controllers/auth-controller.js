@@ -146,7 +146,7 @@ exports.login = async function(req, res) {
                 res.status(response.statusCode).send(response);
                 return;
             }else{
-                if(user.permission == "block"){
+                if(user.permission == "blocked"){
                     let response = error_function({
                         success : false,
                         statusCode : 400,

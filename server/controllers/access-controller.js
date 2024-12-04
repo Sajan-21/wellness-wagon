@@ -37,7 +37,7 @@ exports.access_controller = async function(access_type, req, res, next) {
                         let user_id = decoded.user_id;
                         let user = await users.findOne({_id : user_id});
                         console.log("user : ",user);
-                        if(user.permission == "block"){
+                        if(user.permission == "blocked"){
                             let response = error_function({
                                 success : false,
                                 statusCode : 400,

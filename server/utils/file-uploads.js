@@ -7,7 +7,7 @@ exports.fileUpload = async function (file, directory) {
         try {
             // console.log("file : ", file);
             // console.log("directory : ", directory);
-            let mime_type = file.split(';')[0].split(":")[1].split('/')[1];
+            let mime_type = file.data.split(';')[0].split(":")[1].split('/')[1];
             // console.log("mime_type : ", mime_type);
             if(mime_type === "png" || "jpeg" || "jpg" || "mp4" || "pdf") {
                 // console.log("Allowed file type...");
@@ -17,7 +17,7 @@ exports.fileUpload = async function (file, directory) {
                 // console.log("file_name : ", file_name);
                 let upload_path = `uploads/${directory}`;
                 // console.log("upload_path : ", upload_path);
-                let base64 = file.split(';base64,')[1];
+                let base64 = file.data.split(';base64,')[1];
                 // console.log("base64 : ", base64);
 
                 fs.mkdir(upload_path, {recursive : true}, (err) => {

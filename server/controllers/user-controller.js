@@ -3,7 +3,19 @@ const users = require('../db/model/user');
 
 exports.getAllUsers = async function(req, res) {
     try {
-        let allUsers = await users.find();
+        const user_type = req.params.user_type;
+        let filter = {};
+
+        if(user_type == "Buyer"){
+            filter = {user_type}
+        }else if(user_type == "Seller"){
+            filter = {user_type}
+        }else if(user_type == "Admin"){
+            filter = {user_type : {$ne : user_type}}
+        }else{
+            filter = {};
+        }
+        let allUsers = await users.find(filter);
         console.log("allUsers : ",allUsers);
         let response = success_function({
             success : true,
@@ -103,7 +115,11 @@ exports.updateUser = async function(req, res) {
             name : body.name,
             email : body.email,
             ph_number : body.ph_number,
-            address : body.address,
+            house_name : body.house_name !== ("" || "N/A") ? body.house_name + "(H)" : "not specified",
+            postal_area : body.postal_area !== ("" || "N/A") ? body.postal_area + "(P/O)" : "not specified",
+            pincode : body.pincode !== ("" || "000000") ? body.pincode : "000000",
+            state : body.state !== ("" || "N/A") ? body.state : "not specified",
+            company : body.company !== ("" || "N/A") ? body.company : "not specified",
         }});
         let response = success_function({
             success : true,

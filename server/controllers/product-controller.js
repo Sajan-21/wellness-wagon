@@ -1,5 +1,5 @@
 const categories = require('../db/model/categories');
-const products = require('../db/model/product');
+const products = require('../db/model/products');
 const { success_function, error_function } = require('../utils/response-handler');
 const fileUpload = require('../utils/file-uploads').fileUpload;
 const sendEmail = require('../utils/send-email').sendEmail;
@@ -11,46 +11,43 @@ const users = require('../db/model/user');
 
 exports.addProduct = async function(req, res) {
     try {
-        const id = req.params.auth_id; // Seller ID
+        const id = req.params.auth_id;
         const body = req.body;
         console.log("body : ",body);
-        let category = body.category;
 
-        // Find category by name
-        const category_collection = await categories.findOne({ category });
-        if (!category_collection) {
-            throw new Error("Category not found");
-        }
-        category = category_collection.category;
-
-        // Replace category name with ID
-        body.category = category;
-
-        // Assign seller ID
         body.seller_id = id;
 
-        // Process images in Base64
         if(!body.images){
             let response = error_function({
                 success : true,
                 statusCode : 400,
-                message : "you need to add atleast 1 image of your product"
+                message : "you need to add atleast 2 image of your product"
             });
             res.status(response.statusCode).send(response);
             return;
         }else{
             const directory = "products";
             let b64Images = body.images;
-            let images = await Promise.all(b64Images.map((base64) => fileUpload(base64,directory)));
-            body.images = images;
-            console.log("body.images : ",body.images);
+            if(b64Images.length < 4){
+                let response = error_function({
+                    success : true,
+                    statusCode : 400,
+                    message : "you need to add 4 images"
+                });
+                res.status(response.statusCode).send(response);
+                return;
+            }else{
+                let images = await Promise.all(b64Images.map((base64) => fileUpload(base64,directory)));
+                body.images = images;
+                console.log("body.images : ",body.images);
+            }
         }
+        let seller = await users.findOne({_id : id});
+        seller.company ? body.brand = seller.company : body.brand = "--brand";
 
         console.log("body ready to add : ",body);
-        // Create the product
         await products.create(body);
 
-        // Success response
         const response = success_function({
             success: true,
             statusCode: 200,
@@ -97,9 +94,13 @@ exports.updateProduct = async function(req, res) {
 exports.deleteProduct = async function(req, res) {
     try {
         let id = req.params.auth_id;
+        console.log("auth_id : ",id,typeof(id));
         let product_id = req.params.product_id;
         let product = await products.findOne({_id : product_id});
-        if(product.seller_id !== id){
+        let seller_id = JSON.stringify(product.seller_id);
+        console.log("seller_id : ",seller_id,typeof(seller_id));
+        console.log( seller_id, '"' + id + '"');
+        if( seller_id  !== '"' + id + '"'){
             let response = error_function({
                 success : false,
                 statusCode : 400,
@@ -152,42 +153,6 @@ exports.getProduct = async function(req, res) {
     }
 }
 
-// exports.getProducts = async function(req, res) {
-//     try {
-//         const { category, user_type, auth_id } = req.params;
-//         let filter = {};
-//         if (user_type === "Seller") {
-//             if (!category || category === "null") {
-//                 filter.seller_id = {$ne : auth_id};
-//             } else {
-//                 filter = { category, seller_id: { $ne: auth_id } };
-//             }
-//         } else if (user_type === "Buyer") {
-//             if (category && category !== "null") {
-//                 filter.category = category;
-//             }
-//         }
-//         console.log(filter);
-//         const productsList = await products.find(filter);
-//         let response = success_function({
-//             success : true,
-//             statusCode : 200,
-//             data : productsList
-//         });
-//         res.status(response.statusCode).send(response);
-//         return;
-//     } catch (error) {
-//         console.log("error : ",error);
-//         let response = error_function({
-//             success : false,
-//             statusCode : 400,
-//             message : error.message ? error.message : error
-//         });
-//         res.status(response.statusCode).send(response);
-//         return;
-//     }
-// }
-
 exports.getProducts = async function (req, res) {
     try {
         const { auth_id, user_type, category } = req.params;
@@ -215,6 +180,8 @@ exports.getProducts = async function (req, res) {
             (!user_type || user_type === "Admin") && (!category || category === "null") && !auth_id){
             // Condition 4: Admin or all parameters null (fetch all products)
             filter = {};
+        } else if(user_type === "null" && category !== "null") {
+            filter = {category};
         }
 
         console.log("Generated Filter:", filter);
@@ -242,8 +209,6 @@ exports.getProducts = async function (req, res) {
         return;
     }
 };
-
-
 
 exports.cart = async function(req, res) {
     try {
@@ -412,6 +377,30 @@ exports.categories = async function(req, res) {
             success : false,
             statusCode  : 400,
             message : error.message ? error.message : error
+        });
+        res.status(response.statusCode).send(response);
+        return;
+    }
+}
+
+exports.seller_products = async function(req, res){
+    try {
+        let id = req.params.seller_id;
+        let seller_products = await products.find({seller_id : id});
+        let response =  success_function({
+            success : true,
+            statusCode : 200,
+            data : seller_products
+        });
+        res.status(response.statusCode).send(response);
+        console.log("data : ",seller_products);
+        return;
+    } catch (error) {
+        console.log("error : ",error);
+        let response = error_function({
+            success : false,
+            statusCode : 400,
+            message : error.message ? error.message : error,
         });
         res.status(response.statusCode).send(response);
         return;

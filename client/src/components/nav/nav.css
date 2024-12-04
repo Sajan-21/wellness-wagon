@@ -1,0 +1,9 @@
+.logo-font{
+    font-family: "Saira Stencil One", serif;
+}
+.bg-img{
+    background-image: url('../../images/fit-individual-doing-sport_23-2151764298.jpg');
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+}

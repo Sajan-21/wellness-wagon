@@ -45,7 +45,7 @@ function SignUp() {
 
   return (
     <div>
-        <div className="ww-login-signup text-center">WW</div>
+        {/* <div className="logo-font text-xl text-center">WW</div> */}
       <div className="flex min-h-full md:w-1/2 mx-auto flex-col justify-center p-6 lg:px-8 shadow-2xl">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
@@ -72,6 +72,42 @@ function SignUp() {
                 />
               </div>
             </div>
+
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm/6 font-medium text-gray-900"
+              >
+                select Role
+              </label>
+              <div className="mt-2">
+                <select id="country" name="country" value={user_role} onChange={(e) => setUser_role(e.target.value)} className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-slate-500 sm:text-sm/6">
+                    <option disabled value="">Seller/Buyer</option>
+                    <option value="Seller">Seller</option>
+                    <option value="Buyer">Buyer</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm/6 font-medium text-gray-900"
+              >
+                Mobile number
+              </label>
+              <div className="mt-2">
+                <input
+                onChange={(e) => setNumber(e.target.value)}
+                  id="number"
+                  name="number"
+                  type="number"
+                  required=""
+                  className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-slate-500 sm:text-sm/6"
+                />
+              </div>
+            </div>
+
             <div>
               <label
                 htmlFor="email"
@@ -90,21 +126,7 @@ function SignUp() {
                 />
               </div>
             </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm/6 font-medium text-gray-900"
-              >
-                select Role
-              </label>
-              <div className="mt-2">
-                <select id="country" name="country" value={user_role} onChange={(e) => setUser_role(e.target.value)} className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-slate-500 sm:text-sm/6">
-                    <option disabled value="">Seller/Buyer</option>
-                    <option value="Seller">Seller</option>
-                    <option value="Buyer">Buyer</option>
-                </select>
-              </div>
-            </div>
+            
             <div>
               <div className="items-center">
                 <label
@@ -125,24 +147,7 @@ function SignUp() {
                 />
               </div>
             </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm/6 font-medium text-gray-900"
-              >
-                Mobile number
-              </label>
-              <div className="mt-2">
-                <input
-                onChange={(e) => setNumber(e.target.value)}
-                  id="number"
-                  name="number"
-                  type="number"
-                  required=""
-                  className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-slate-500 sm:text-sm/6"
-                />
-              </div>
-            </div>
+            
             <div>
               <button
                 type="submit"

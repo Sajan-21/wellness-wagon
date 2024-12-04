@@ -12,13 +12,14 @@ function setAccessController(access_type) {
 router.post('/product/:auth_id',setAccessController('2'),productController.addProduct);
 router.patch('/product/:auth_id/:product_id',setAccessController('2'),productController.updateProduct);
 router.delete('/product/:auth_id/:product_id',setAccessController('2'),productController.deleteProduct);
-router.get('/product/:product_id',setAccessController('*'),productController.getProduct);
+router.get('/product/:product_id',productController.getProduct);
 router.get('/products/:auth_id/:category/:user_type',productController.getProducts);
 router.patch('/cart/:auth_id/:product_id',setAccessController("2,3"),productController.cart);
-router.patch('/wish_lists/:auth_id/:product_id',setAccessController("2,3"),productController.wish_lists);
+router.patch('/wish-list/:auth_id/:product_id',setAccessController("2,3"),productController.wish_lists);
 router.patch('/removeFromCart/:auth_id/:product_id',setAccessController("2,3"),productController.removeFromCart);
 router.patch('/removeFromWish_lists/:auth_id/:product_id',setAccessController("2,3"),productController.removeFromWish_lists);
 router.patch('/orderProduct/:auth_id/:product_id',setAccessController("2,3"),productController.buyProduct);
 router.get('/categories',setAccessController('*'),productController.categories);
+router.get('/seller-products/:seller_id',setAccessController("1,2"),productController.seller_products);
 
 module.exports = router;

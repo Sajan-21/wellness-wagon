@@ -37,15 +37,14 @@ function Login() {
             }
 
         } catch (error) {
-            console.log("error : ",error);
+            console.log("error while login : ",error);
+            alert(error.response.data.message)
         }
     }
-    
-
 
   return (
     <div className="">
-        <div className="ww-login-signup text-center my-5">WW</div>
+        <div className="logo-font text-center my-5 text-7xl">WW</div>
       <div className="flex min-h-full md:w-1/2 mx-auto my-auto flex-col justify-center px-6 py-12 lg:px-8 shadow-2xl">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">

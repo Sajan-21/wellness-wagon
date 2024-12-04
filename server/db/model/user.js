@@ -16,25 +16,17 @@ const userScheme = new mongoose.Schema({
   ph_number: {
     type: Number,
   },
-  address: {
-    houseName: {
-      type: String,
-    },
-    postalArea: {
-      type: String
-    },
-    city: {
-      type: String,
-    },
-    state: {
-      type: String,
-    },
-    pincode: {
-      type: Number
-    },
-    landmark: {
-      type: String,
-    },
+  house_name : {
+    type : String
+  },
+  postal_area : {
+    type : String
+  },
+  pincode : {
+    type : String
+  },
+  state : {
+    type : String
   },
   permission: {
     type: String,
@@ -48,6 +40,12 @@ const userScheme = new mongoose.Schema({
   products_bought: [
     String
   ],
+  company : {
+    type : String
+  },
+  profit : {
+    type : String
+  }
 });
 
 module.exports = mongoose.model("users", userScheme);
