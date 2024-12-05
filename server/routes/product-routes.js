@@ -15,10 +15,12 @@ router.delete('/product/:auth_id/:product_id',setAccessController('2'),productCo
 router.get('/product/:product_id',productController.getProduct);
 router.get('/products/:auth_id/:category/:user_type',productController.getProducts);
 router.patch('/cart/:auth_id/:product_id',setAccessController("2,3"),productController.cart);
+router.patch('/remove-from-cart/:auth_id/:product_id',setAccessController("2,3"),productController.removeFromCart);
+router.get('/cart/:user_id',setAccessController("*"),productController.getCartProducts);
 router.patch('/wish-list/:auth_id/:product_id',setAccessController("2,3"),productController.wish_lists);
-router.patch('/removeFromCart/:auth_id/:product_id',setAccessController("2,3"),productController.removeFromCart);
-router.patch('/removeFromWish_lists/:auth_id/:product_id',setAccessController("2,3"),productController.removeFromWish_lists);
-router.patch('/orderProduct/:auth_id/:product_id',setAccessController("2,3"),productController.buyProduct);
+router.patch('/remove-from-wish-lists/:auth_id/:product_id',setAccessController("2,3"),productController.removeFromWish_lists);
+router.get('/wish-list/:user_id',setAccessController("*"),productController.getWishListProducts);
+router.patch('/order-product/:auth_id/:product_id',setAccessController("2,3"),productController.buyProduct);
 router.get('/categories',setAccessController('*'),productController.categories);
 router.get('/seller-products/:seller_id',setAccessController("1,2"),productController.seller_products);
 

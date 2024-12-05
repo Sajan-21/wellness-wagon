@@ -55,11 +55,6 @@ function SellerProfile() {
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{seller.ph_number}</dd>
           </div>
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-gray-900">Number of Products added</dt>
-            <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{seller.added_Products ? (seller.added_products).length : "N/A"}
-            </dd>
-          </div>
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">Number of Products in your cart</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{seller.cart_lists ? (seller.cart_lists).length : "N/A"}
             </dd>

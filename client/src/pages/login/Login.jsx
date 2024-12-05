@@ -43,9 +43,8 @@ function Login() {
     }
 
   return (
-    <div className="">
-        <div className="logo-font text-center my-5 text-7xl">WW</div>
-      <div className="flex min-h-full md:w-1/2 mx-auto my-auto flex-col justify-center px-6 py-12 lg:px-8 shadow-2xl">
+    <div className="login-body  bg-slate-200">
+      <div className="flex md:w-1/2 mx-auto my-auto flex-col justify-center px-6 py-12 lg:px-8 shadow-2xl bg-white">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
             Log in to your account

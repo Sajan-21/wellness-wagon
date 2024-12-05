@@ -208,7 +208,7 @@ exports.getProducts = async function (req, res) {
         res.status(response.statusCode).send(response);
         return;
     }
-};
+}
 
 exports.cart = async function(req, res) {
     try {
@@ -252,6 +252,44 @@ exports.removeFromCart = async function(req, res) {
             success : false,
             statusCode : 400,
             message : error.message ? error.message : error
+        });
+        res.status(response.statusCode).send(response);
+        return;
+    }
+}
+
+exports.getCartProducts = async function (req, res) {
+    try {
+        const id = req.params.user_id;
+        const user = await users.findOne({ _id: id });
+
+        if (!user || !user.cart_lists) {
+            throw new Error("User or cart list not found");
+        }
+        const cartLists = user.cart_lists;
+
+        const cartProducts = await Promise.all(
+            cartLists.map(async (_id) => {
+                console.log("_id:", _id);
+                const product = await products.findOne({ _id });
+                console.log("Product:", product);
+                return product;
+            })
+        );
+
+        const response = success_function({
+            success: true,
+            statusCode: 200,
+            data: cartProducts,
+        });
+        console.log("Cart Products:", cartProducts);
+        res.status(response.statusCode).send(response);
+        return;
+    } catch (error) {
+        const response = error_function({
+            success: false,
+            statusCode: 400,
+            message: error.message || error,
         });
         res.status(response.statusCode).send(response);
         return;
@@ -306,6 +344,45 @@ exports.removeFromWish_lists = async function(req, res) {
     }
 }
 
+exports.getWishListProducts = async function (req, res) {
+    try {
+        const id = req.params.user_id;
+        const user = await users.findOne({ _id: id });
+
+        if (!user || !user.wish_lists) {
+            throw new Error("User or wish list not found");
+        }
+        const wishLists = user.wish_lists;
+
+        const wishListProducts = await Promise.all(
+            wishLists.map(async (_id) => {
+                console.log("_id:", _id);
+                const product = await products.findOne({ _id });
+                console.log("Product:", product);
+                return product;
+            })
+        );
+
+        const response = success_function({
+            success: true,
+            statusCode: 200,
+            data: wishListProducts,
+        });
+
+        console.log("Wish List Products:", wishListProducts);
+        res.status(response.statusCode).send(response);
+        return;
+    } catch (error) {
+        const response = error_function({
+            success: false,
+            statusCode: 400,
+            message: error.message || error,
+        });
+        res.status(response.statusCode).send(response);
+        return;
+    }
+}
+
 exports.buyProduct = async function(req, res) {
     try {
         let buyer_id = req.params.auth_id;
@@ -315,31 +392,46 @@ exports.buyProduct = async function(req, res) {
         let seller = await users.findOne({_id : seller_id});
         let buyer = await users.findOne({_id : buyer_id});
 
+        if(!buyer.pincode || buyer.pincode == "" || buyer.pincode == "not specified" || buyer.pincode == undefined || buyer.pincode == null || buyer.pincode == "N/A" || !buyer.house_name || buyer.house_name == "" || buyer.house_name == "not specified" || buyer.house_name == undefined || buyer.house_name == null || buyer.house_name == "N/A" || !buyer.postal_area || buyer.postal_area == "" || buyer.postal_area == "not specified" || buyer.postal_area == undefined || buyer.postal_area == null || buyer.postal_area == "N/A" || !buyer.state || buyer.state == "" || buyer.state == "not specified" || buyer.state == undefined || buyer.state == null || buyer.state == "N/A" ){
+            let response = error_function({
+                success : false,
+                statusCode : 400,
+                message : "something is missing in your address, please try again",
+            });
+            res.status(response.statusCode).send(response);
+            return;
+        }
+
         if(product.stock_count === 0){
-            let response = success_function({
+            let response = error_function({
                 success : false,
                 statusCode : 400,
                 message : "you can't buy this product, this product is out of stock"
             });
             res.status(response.statusCode).send(response);
             return;
+        }else{
+            // let order_email_template_seller = await orderMailSeller_template(buyer,product);
+            //await sendEmail(seller.email, "new order", order_email_template_seller);
+
+            // let order_email_template_admin = await orderMailAdmin_template(buyer, seller, product);
+            // await sendEmail(buyer.email, "new order", order_email_template_admin);
+
+            if(product.stock_count === 1){
+
+                // let out_of_stock_template = await outOfStockMail_template(seller, product);
+                // await sendEmail(seller.email, "out of stock", out_of_stock_template);
+            };
+
+            // let order_email_template_buyer = await orderMailBuyer_template(buyer, product);
+            // await sendEmail(buyer.email, "order placed", order_email_template_buyer);
+
+            let stock_count = product.stock_count - 1;
+            await products.updateOne({product_id}, {$set : {stock_count : stock_count}});
+            await users.updateOne({_id : buyer_id}, {$push: {products_bought : product_id}});
+            let profit = Number(seller.profit) + product.price;
+            await users.updateOne({_id : seller_id},{$set : {profit}});
         }
-
-        // let order_email_template_seller = await orderMailSeller_template(buyer,product);
-//         await sendEmail(seller.email, "new order", order_email_template_seller);
-
-        // let order_email_template_admin = await orderMailAdmin_template(buyer, seller, product);
-        // await sendEmail(buyer.email, "new order", order_email_template_admin);
-
-        if(product.stock_count === 1){
-            await products.updateOne({product_id},{$set : {stock_count : stock_count-1}});
-
-            // let out_of_stock_template = await outOfStockMail_template(seller, product);
-            // await sendEmail(seller.email, "out of stock", out_of_stock_template);
-        };
-
-        // let order_email_template_buyer = await orderMailBuyer_template(buyer, product);
-        // await sendEmail(buyer.email, "order placed", order_email_template_buyer);
 
         let response = success_function({
             success : true,

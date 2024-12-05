@@ -49,24 +49,27 @@ exports.orderMailAdmin = function (buyer,seller, product) {
         <div>
           <p>buyer details : </p>
         <ul>
-          <li>buyer name</li>
-          <li>phone number</li>
-          <li>buyer email</li>
+          <li>${buyer._id}</li>
+          <li>${buyer.ph_number}</li>
+          <li>${buyer.email}</li>
+          <li>${buyer.postal_area}</li>
+          <li>${buyer.pincode}</li>
         </ul>
         </div>
         <div>
           <p>seller details : </p>
         <ul>
-          <li>seller_id</li>
-          <li>phone number</li>
-          <li>seller email</li>
+          <li>${seller._id}</li>
+          <li>${seller.ph_number}</li>
+          <li>${seller.email}</li>
+          <li>${seller.company}</li>
         </ul>
         </div>
         <div>
           <p>product details : </p>
         <ul>
-          <li>product _id</li>
-          <li>product price</li>
+          <li>${product._id}</li>
+          <li>${product.price}</li>
         </ul>
         </div>
         

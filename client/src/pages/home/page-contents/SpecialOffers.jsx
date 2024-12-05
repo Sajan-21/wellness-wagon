@@ -13,13 +13,13 @@ function SpecialOffers() {
   return (
     <div>
       <div className="bg-white">
-        <div className="mx-auto max-w-2xl px-4 sm:px-6 sm:py-10 lg:max-w-7xl lg:px-8">
+        <div className="mx-auto max-w-2xl px-4 sm:px-6 sm:py-5 lg:max-w-7xl lg:px-8">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900 py-5">
+            <div className="text-4xl font-bold tracking-tight text-gray-900 pb-10 nav-font">
               Special Offers
-            </h2>
+            </div>
             <p>
-            <Link to={params.auth_id ? `/shop/${params.auth_id}/${params.user_type}` : `/shop/${params.auth_id}/${params.user_type}` } >see more</Link>
+            <Link to={params.auth_id ? `/shop/${params.auth_id}/${params.user_type}` : `/shop` } >see more</Link>
             </p>
           </div>
           <div className="swiper-div">

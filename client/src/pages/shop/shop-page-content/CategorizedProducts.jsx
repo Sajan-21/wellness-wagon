@@ -18,7 +18,7 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faCartShopping, faIndianRupee } from "@fortawesome/free-solid-svg-icons";
 import GetAllProducts from "../../../components/get-all-products/GetAllProducts";
 import FetchCategory from "../../../components/fetch-category/FetchCategory";
 import useCheckLogin from "../../../components/check-login/useCheckLogin";
@@ -91,7 +91,7 @@ export default function CatetgorizedProducts() {
   }, [selectedCategories, params.auth_id, params.user_type]);
 
   const handleProductOverview = (product_id) => {
-    navigate(`/product-overview/${product_id}`)
+    !isLoggedIn ? navigate(`/product-overview/${product_id}`) : navigate(`/product-overview/${params.auth_id}/${params.user_type}/${product_id}`);
   }
 
   const handleCart = useCallback(async (product_id) => {
@@ -224,7 +224,7 @@ export default function CatetgorizedProducts() {
         </Dialog>
 
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
+          <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-10">
             <div className="text-2xl font-bold tracking-tight text-gray-900">Shop by Your Wish</div>
 
             <div className="flex items-center">
@@ -314,7 +314,7 @@ export default function CatetgorizedProducts() {
             <div
               key={product._id}
               href={`/product-overview/${product._id}`}
-              className="group hover:shadow-lg rounded-2xl border"
+              className="group hover:shadow-lg rounded-2xl border bg-slate-50"
             >
               <div className="">
                 <img
@@ -332,7 +332,7 @@ export default function CatetgorizedProducts() {
                       {product.name}
                     </h3>
                     <p className="mt-1 text-lg font-medium text-red-500">
-                      {product.price_currency ? product.price_currency : "INR"} {product.price}
+                      {product.price_currency ? product.price_currency : <FontAwesomeIcon icon={faIndianRupee} />} {product.price}
                     </p>
                   </div>
                   <div className="text-end space-x-5">

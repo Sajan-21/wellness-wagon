@@ -19,6 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo,faUserTag, faPeopleGroup, faUserLargeSlash } from '@fortawesome/free-solid-svg-icons';
 import WWinfo from './admin-page-contents/WWinfo';
 import BlockUnblock from './admin-page-contents/BlockUnblock';
+import AdminNav from './admin-page-contents/AdminNav';
 
 
 const subCategories = [
@@ -42,6 +43,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="bg-white">
+<AdminNav />
       <div>
         {/* Mobile filter dialog */}
         <Dialog open={mobileFiltersOpen} onClose={setMobileFiltersOpen} className="relative z-40 lg:hidden">
@@ -84,16 +86,9 @@ export default function AdminDashboard() {
 
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between border-b border-gray-200 py-5">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900">Dashboard</h1>
-
             <div className="flex items-center">
               <Menu as="div" className="relative inline-block text-left">
               </Menu>
-
-              <button type="button" className="-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7">
-                <span className="sr-only">View grid</span>
-                <Squares2X2Icon aria-hidden="true" className="size-5" />
-              </button>
               <button
                 type="button"
                 onClick={() => setMobileFiltersOpen(true)}

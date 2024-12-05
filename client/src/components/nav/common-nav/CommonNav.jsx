@@ -11,6 +11,8 @@ import {
   import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useCheckLogin from '../../check-login/useCheckLogin';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -39,6 +41,22 @@ function CommonNav() {
 
   const handleAuthorization = () => {
     navigate('/login');
+  }
+
+  const handleWishListPage = () => {
+    if(!checkLogin){
+      alert("you are not able to continue without login/sign-up")
+    }else{
+      navigate(`/wish-list/${params.auth_id}/${params.user_type}`);
+    }
+  }
+
+  const handleCartPage = () => {
+    if(!checkLogin){
+      alert("you are not able to continue without login/sign-up")
+    }else{
+      navigate(`/cart/${params.auth_id}/${params.user_type}`);
+    }
   }
 
   const handleProfile = () => {
@@ -82,9 +100,9 @@ function CommonNav() {
                 />
               </DisclosureButton>
             </div>
-            <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start max-sm:justify-start max-sm:ms-12 ">
+            <div className="flex flex-1 items-center justify-center sm:items-center sm:justify-start max-sm:justify-start max-sm:ms-12 ">
               <div className="flex shrink-0 items-center">
-                <div className="text-white logo-font text-4xl">WW</div>
+                <div className="text-white logo-font text-5xl">WW</div>
               </div>
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4">
@@ -96,8 +114,8 @@ function CommonNav() {
                       className={classNames(
                         item.current
                           ? "bg-gray-900 text-white"
-                          : "text-gray-300 hover:border-b hover:text-white",
-                        "px-3 py-2 text-sm font-medium"
+                          : "text-gray-300 hover:border-b hover:text-white nav-font",
+                        "px-3 py-2 text-lg font-medium"
                       )}
                     >
                       {item.name}
@@ -108,6 +126,7 @@ function CommonNav() {
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center gap-5 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
               <button
+              onClick={handleWishListPage}
                 type="button"
                 className="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
               >
@@ -129,6 +148,7 @@ function CommonNav() {
                 </svg>
               </button>
               <button
+              onClick={handleCartPage}
                 type="button"
                 className="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
               >
@@ -153,24 +173,20 @@ function CommonNav() {
               {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
-                  <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                <MenuButton className="relative flex rounded-full focus:outline-none text-xl text-slate-400 max-sm:text-white hover:text-white">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      alt=""
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      className="size-8 rounded-full"
-                    />
+                    <FontAwesomeIcon icon={faUser} />
                   </MenuButton>
                 </div>
                 <MenuItems
                   transition
-                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md max-sm:text-white bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                 >
                   <MenuItem>
                     <div
                     onClick={handleProfile}
-                      className={classNames(!checkLogin ? "hidden" : "block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none")}
+                      className={classNames(!checkLogin ? "hidden" : "block px-4 py-2 text-sm max-sm:text-white text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none")}
                     >
                       Your Profile
                     </div>

@@ -44,9 +44,8 @@ function SignUp() {
     }
 
   return (
-    <div>
-        {/* <div className="logo-font text-xl text-center">WW</div> */}
-      <div className="flex min-h-full md:w-1/2 mx-auto flex-col justify-center p-6 lg:px-8 shadow-2xl">
+    <div className='bg-slate-200 signup-body'>
+      <div className="flex md:w-1/2 mx-auto flex-col justify-center p-6 lg:px-8 shadow-2xl bg-white">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
             create your own account

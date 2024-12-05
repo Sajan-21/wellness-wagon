@@ -55,9 +55,9 @@ exports.orderMailSeller = function (buyer, product) {
       <div class="content">
         <p>order details : </p>
         <ul>
-          <li>buyer name</li>
-          <li>product bought</li>
-          <li>product price</li>
+          <li>Ordered by : ${buyer.name}</li>
+          <li>product : ${product._id}</li>
+          <li>price : ${product.price}</li>
         </ul>
       </div>
       <div class="footer">

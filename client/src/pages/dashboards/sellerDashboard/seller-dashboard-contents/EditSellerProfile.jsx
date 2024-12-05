@@ -25,7 +25,10 @@ export default function EditSellerProfile() {
         headers : { Authorization : `Bearer ${token}` },
         data : seller,
     });
-    console.log("seller : ",seller);
+    if(response.data.statusCode == 200) {
+      alert(response.data.message);
+      window.location.reload();
+    }
   }, [auth_id, seller, token]);
 
 
@@ -44,7 +47,7 @@ export default function EditSellerProfile() {
           pincode : response.pincode ? response.pincode : "000000",
           state : response.state ? response.state : "N/A",
           company : response.company ? response.company : "N/A",
-        }); // Set initial seller data
+        });
       } catch (error) {
         console.log("error : ", error);
       }

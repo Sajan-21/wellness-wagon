@@ -60,6 +60,7 @@ exports.signUp = async function(req, res) {
             let user_type_collection = await user_types.findOne({user_type});
             let userType_userType = user_type_collection.user_type;
             body.user_type = userType_userType;
+            body.profit = 0;
         }else{
             let user_type_collection = await user_types.findOne({user_type});
             let userType_userType = user_type_collection.user_type;

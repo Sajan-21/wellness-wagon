@@ -1,5 +1,5 @@
 import "./productListing.css"
-import { faCartShopping, faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping, faHeart, faIndianRupee } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useCallback } from "react";
 import { useNavigate,useParams } from "react-router-dom";
@@ -7,15 +7,15 @@ import AddToCart from "../add-to-cart/AddToCart";
 import useCheckLogin from "../check-login/useCheckLogin";
 import AddToWishList from "../add-to-wish-list/AddToWishList";
 
-export default function ProductsListing({ products }) {
+export default function ProductsListing({ products, heading }) {
   const navigate = useNavigate();
-
-  const handleProductOverview = (product_id) => {
-    navigate(`/product-overview/${product_id}`)
-  }
 
   const params = useParams();
   const isLoggedIn = useCheckLogin();
+
+  const handleProductOverview = (product_id) => {
+    !isLoggedIn ? navigate(`/product-overview/${product_id}`) : navigate(`/product-overview/${params.auth_id}/${params.user_type}/${product_id}`);
+  }
 
   const handleCart = useCallback(async (product_id) => {
       if (!isLoggedIn) {
@@ -52,14 +52,14 @@ export default function ProductsListing({ products }) {
 
 
   return (
-    <div className="bg-white">
-      <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14 lg:max-w-7xl lg:px-8">
-
+    <div className="">
+      <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-10 lg:max-w-7xl lg:px-8">
+        <div className="pb-10 text-4xl font-semibold nav-font">{heading}</div>
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
           {products.map((product) => (
             <div
               key={product._id}
-              className="group hover:shadow-lg rounded-2xl border"
+              className="group hover:shadow-lg rounded-2xl border bg-slate-50"
             >
               <div className="">
                 <img
@@ -77,7 +77,7 @@ export default function ProductsListing({ products }) {
                       {product.name}
                     </h3>
                     <p className="mt-1 text-lg font-medium text-red-500">
-                      {product.price_currency ? product.price_currency : "INR"} {product.price}
+                      {product.price_currency ? product.price_currency : <FontAwesomeIcon icon={faIndianRupee} />} {product.price}
                     </p>
                   </div>
                   <div className="text-end space-x-5">

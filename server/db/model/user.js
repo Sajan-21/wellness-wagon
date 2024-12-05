@@ -43,6 +43,9 @@ const userScheme = new mongoose.Schema({
   company : {
     type : String
   },
+  products_added : [
+    String
+  ],
   profit : {
     type : String
   }

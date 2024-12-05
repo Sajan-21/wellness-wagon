@@ -14,7 +14,7 @@ function NewArrivals() {
     const fetchAllProducts = async () => {
       try {
         const allProducts = await GetAllProducts(auth_id, category, user_type);
-        setProducts(allProducts.slice(-4));
+        setProducts(allProducts.slice(-8));
       } catch (error) {
         console.log("Error fetching products:", error);
       }
@@ -26,7 +26,7 @@ function NewArrivals() {
 
   return (
     <div>
-      <ProductsListing products={products} />
+      <ProductsListing products={products} heading={"New Arrivals"} />
     </div>
   );
 }

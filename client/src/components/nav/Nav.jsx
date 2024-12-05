@@ -12,57 +12,74 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import "./nav.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useCheckLogin from "../check-login/useCheckLogin";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 function Nav() {
-
   const navigate = useNavigate();
   const params = useParams();
   const checkLogin = useCheckLogin();
 
-  let navigation
-  if(checkLogin){
+  let navigation;
+  if (checkLogin) {
     navigation = [
-      { name: 'Home', href: `/${params.auth_id}/${params.user_type}`},
-      { name: 'Shop', href: `/shop/${params.auth_id}/${params.user_type}`},
-      { name: 'About', href: `/about/${params.auth_id}/${params.user_type}`}
-    ]
-  }else{
+      { name: "Home", href: `/${params.auth_id}/${params.user_type}` },
+      { name: "Shop", href: `/shop/${params.auth_id}/${params.user_type}` },
+      { name: "About", href: `/about/${params.auth_id}/${params.user_type}` },
+    ];
+  } else {
     navigation = [
-      { name: 'Home', href: '/'},
-      { name: 'Shop', href: '/shop'},
-      { name: 'About', href: '/about'}
-    ]
+      { name: "Home", href: "/" },
+      { name: "Shop", href: "/shop" },
+      { name: "About", href: "/about" },
+    ];
   }
 
   const handleAuthorization = () => {
-    navigate('/login');
-  }
+    navigate("/login");
+  };
 
   const handleProfile = () => {
-      const auth_id = params.auth_id;
-      const user_type = params.user_type;
-      if(user_type == "Seller"){
-        navigate(`/seller-dashboard/${auth_id}/${user_type}`);
-      }else if(user_type == "Buyer"){
-        navigate(`/Buyer-dashboard/${auth_id}/${user_type}`);
-      }else{
-        navigate(`/admin-dashboard/${auth_id}/${user_type}`);
-      }
-  }
+    const auth_id = params.auth_id;
+    const user_type = params.user_type;
+    if (user_type == "Seller") {
+      navigate(`/seller-dashboard/${auth_id}/${user_type}`);
+    } else if (user_type == "Buyer") {
+      navigate(`/Buyer-dashboard/${auth_id}/${user_type}`);
+    } else {
+      navigate(`/admin-dashboard/${auth_id}/${user_type}`);
+    }
+  };
+
+  const handleWishListPage = () => {
+    if (!checkLogin) {
+      alert("you are not able to continue without login/sign-up");
+    } else {
+      navigate(`/wish-list/${params.auth_id}/${params.user_type}`);
+    }
+  };
+
+  const handleCartPage = () => {
+    if (!checkLogin) {
+      alert("you are not able to continue without login/sign-up");
+    } else {
+      navigate(`/cart/${params.auth_id}/${params.user_type}`);
+    }
+  };
 
   const handleSignOut = () => {
-    if(!checkLogin){
+    if (!checkLogin) {
       alert("you are not logged in to sign out");
-    }else{
+    } else {
       localStorage.removeItem(params.auth_id);
       alert("logged out");
-      navigate('/');
+      navigate("/");
     }
-  }
+  };
 
   return (
     <div className="bg-img h-screen">
@@ -84,13 +101,13 @@ function Nav() {
                 />
               </DisclosureButton>
             </div>
-            <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start max-sm:justify-start max-sm:ms-12 ">
+            <div className="flex flex-1 items-center justify-center sm:items-center sm:justify-start max-sm:justify-start max-sm:ms-12 ">
               <div className="flex shrink-0 items-center">
-                <div className="text-white logo-font text-4xl">WW</div>
+                <div className="text-white logo-font text-5xl">WW</div>
               </div>
-              <div className="hidden sm:ml-6 sm:block">
+              <div className="max-sm:hidden sm:ml-6  sm:block">
                 <div className="flex space-x-4">
-                  {navigation.map((item,index) => (
+                  {navigation.map((item, index) => (
                     <Link
                       key={index}
                       to={item.href}
@@ -99,7 +116,7 @@ function Nav() {
                         item.current
                           ? "bg-gray-900 text-white"
                           : "text-gray-300 hover:border-b hover:text-white",
-                        "px-3 py-2 text-sm font-medium"
+                        "px-3 py-2 text-lg font-medium nav-font"
                       )}
                     >
                       {item.name}
@@ -110,6 +127,7 @@ function Nav() {
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center gap-5 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
               <button
+                onClick={handleWishListPage}
                 type="button"
                 className="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
               >
@@ -131,8 +149,9 @@ function Nav() {
                 </svg>
               </button>
               <button
+                onClick={handleCartPage}
                 type="button"
-                className="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                className="relative rounded-full p-1 text-gray-400 hover:text-white"
               >
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">View notifications</span>
@@ -155,14 +174,10 @@ function Nav() {
               {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
-                  <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <MenuButton className="relative flex rounded-full focus:outline-none text-xl text-slate-400 hover:text-white">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      alt=""
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      className="size-8 rounded-full"
-                    />
+                    <FontAwesomeIcon icon={faUser} />
                   </MenuButton>
                 </div>
                 <MenuItems
@@ -171,24 +186,36 @@ function Nav() {
                 >
                   <MenuItem>
                     <div
-                    onClick={handleProfile}
-                      className={classNames(!checkLogin ? "hidden" : "block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none")}
+                      onClick={handleProfile}
+                      className={classNames(
+                        !checkLogin
+                          ? "hidden"
+                          : "block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                      )}
                     >
                       Your Profile
                     </div>
                   </MenuItem>
                   <MenuItem>
                     <div
-                    onClick={handleAuthorization}
-                      className={classNames(!checkLogin ? "block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none" : "hidden")}
+                      onClick={handleAuthorization}
+                      className={classNames(
+                        !checkLogin
+                          ? "block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                          : "hidden"
+                      )}
                     >
                       Sign-up/Login
                     </div>
                   </MenuItem>
                   <MenuItem>
                     <div
-                    onClick={handleSignOut}
-                      className={!checkLogin ? "hidden" : "block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"}
+                      onClick={handleSignOut}
+                      className={
+                        !checkLogin
+                          ? "hidden"
+                          : "block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                      }
                     >
                       Sign out
                     </div>
@@ -208,9 +235,9 @@ function Nav() {
                 href={item.href}
                 className={classNames(
                   item.current == item.name
-                    ? "bg-gray-900 text-white"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                  "block rounded-md px-3 py-2 text-base font-medium"
+                    ? "bg-gray-900 text-white nav-font"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white nav-font",
+                  "block rounded-md px-3 py-2 text-base font-medium nav-font"
                 )}
               >
                 {item.name}
@@ -221,8 +248,12 @@ function Nav() {
       </Disclosure>
       <div>
         <div className="p-28 moto my-auto text-center space-y-12 text-white gap-8 max-lg:p-14">
-          <div className="text-7xl max-lg:text-6xl max-md:text-5xl logo-font">NOT ONE DAY</div>
-          <div className="text-7xl max-lg:text-6xl max-md:text-5xl logo-font">SAY DAY ONE</div>
+          <div className="text-7xl max-lg:text-6xl max-md:text-5xl logo-font">
+            NOT ONE DAY
+          </div>
+          <div className="text-7xl max-lg:text-6xl max-md:text-5xl logo-font">
+            SAY DAY ONE
+          </div>
           <div>
             <button className="text-2xl border text-m px-3 py-2 hover:bg-white hover:text-black hover:font-bold">
               Shop Now

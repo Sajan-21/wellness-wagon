@@ -29,16 +29,11 @@ function Shop() {
   console.log("products : ",products);
 
   return (
-    <div>
+    <div className="bg-slate-200">
         <OfferNav />
       <CommonNav />
         <CatetgorizedProducts />
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 sm:py-10 lg:max-w-7xl lg:px-8">
-        <div className="text-2xl font-bold tracking-tight text-gray-900 pb-10">
-          Explore Wellness Wagon
-        </div>
-        <ProductsListing products={products} />
-      </div>
+        <ProductsListing products={products} heading={"Explore Wellness Wagon"}/>
     </div>
   );
 }
