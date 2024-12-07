@@ -7,6 +7,10 @@ import AddToCart from "../add-to-cart/AddToCart";
 import useCheckLogin from "../check-login/useCheckLogin";
 import AddToWishList from "../add-to-wish-list/AddToWishList";
 
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
+
 export default function ProductsListing({ products, heading }) {
   const navigate = useNavigate();
 
@@ -80,7 +84,7 @@ export default function ProductsListing({ products, heading }) {
                       {product.price_currency ? product.price_currency : <FontAwesomeIcon icon={faIndianRupee} />} {product.price}
                     </p>
                   </div>
-                  <div className="text-end space-x-5">
+                  <div className={classNames(params.user_type == "Admin" ? "hidden" : "text-end space-x-5")}>
                     <button onClick={() => handleCart(`${product._id}`)}>
                       <FontAwesomeIcon
                         icon={faCartShopping}

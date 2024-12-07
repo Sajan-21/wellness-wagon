@@ -8,11 +8,11 @@ function SellerProfile() {
     const params = useParams();
     const [seller, setSeller] = useState({});
     const auth_id = params.auth_id;
-    let token = localStorage.getItem(auth_id);
+    const token = localStorage.getItem(auth_id);
 
     useEffect(() => {
       const fetchSeller = async () => {
-        const sellerData = await GetUser(auth_id);
+        const sellerData = await GetUser(auth_id, token);
         setSeller(sellerData);
       };
     
@@ -25,7 +25,7 @@ function SellerProfile() {
     <div>
       <div className="px-4 sm:px-0">
         <h3 className="text-base/7 font-semibold text-gray-900">{seller.name}</h3>
-        <p className="mt-1 max-w-2xl text-sm/6 text-gray-500">Your details</p>
+        <p className="mt-1 max-w-2xl text-sm/6 text-gray-500">details</p>
       </div>
       <div className="mt-6 border-t border-gray-100">
         <dl className="divide-y divide-gray-100">

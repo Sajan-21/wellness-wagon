@@ -18,7 +18,7 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faCartShopping, faIndianRupee } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faCartShopping, faIndianRupee, faSearch } from "@fortawesome/free-solid-svg-icons";
 import GetAllProducts from "../../../components/get-all-products/GetAllProducts";
 import FetchCategory from "../../../components/fetch-category/FetchCategory";
 import useCheckLogin from "../../../components/check-login/useCheckLogin";

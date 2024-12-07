@@ -23,38 +23,6 @@ function AdminNav() {
   const params = useParams();
   const checkLogin = useCheckLogin();
 
-  const handleAuthorization = () => {
-    navigate("/login");
-  };
-
-  const handleWishListPage = () => {
-    if (!checkLogin) {
-      alert("you are not able to continue without login/sign-up");
-    } else {
-      navigate(`/wish-list/${params.auth_id}/${params.user_type}`);
-    }
-  };
-
-  const handleCartPage = () => {
-    if (!checkLogin) {
-      alert("you are not able to continue without login/sign-up");
-    } else {
-      navigate(`/cart/${params.auth_id}/${params.user_type}`);
-    }
-  };
-
-  const handleProfile = () => {
-    const auth_id = params.auth_id;
-    const user_type = params.user_type;
-    if (user_type == "Seller") {
-      navigate(`/seller-dashboard/${auth_id}/${user_type}`);
-    } else if (user_type == "Buyer") {
-      navigate(`/Buyer-dashboard/${auth_id}/${user_type}`);
-    } else {
-      navigate(`/admin-dashboard/${auth_id}/${user_type}`);
-    }
-  };
-
   const handleSignOut = () => {
     if (!checkLogin) {
       alert("you are not logged in to sign out");
@@ -65,8 +33,8 @@ function AdminNav() {
     }
   };
   return (
-    <div>
-      <Disclosure as="nav" className="bg-slate-500">
+    <div className="w-3/4 mx-auto mt-5">
+      <Disclosure as="nav" className="bg-slate-500 rounded-full">
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">
             <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">

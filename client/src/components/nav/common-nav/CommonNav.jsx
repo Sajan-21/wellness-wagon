@@ -12,7 +12,7 @@ import {
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useCheckLogin from '../../check-login/useCheckLogin';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faBackward } from '@fortawesome/free-solid-svg-icons';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -61,11 +61,13 @@ function CommonNav() {
 
   const handleProfile = () => {
       const auth_id = params.auth_id;
+      console.log(auth_id)
       const user_type = params.user_type;
+      console.log(user_type)
       if(user_type == "Seller"){
         navigate(`/seller-dashboard/${auth_id}/${user_type}`);
       }else if(user_type == "Buyer"){
-        navigate(`/Buyer-dashboard/${auth_id}/${user_type}`);
+        navigate(`/buyer-dashboard/${auth_id}/${user_type}`);
       }else{
         navigate(`/admin-dashboard/${auth_id}/${user_type}`);
       }
@@ -80,9 +82,14 @@ function CommonNav() {
       navigate('/');
     }
   }
+
+  const handleBack = () => {
+    navigate(`/admin-dashboard/${params.auth_id}/${params.user_type}`);
+  }
+
   return (
     <div>
-      <Disclosure as="nav" className="bg-slate-500">
+      {params.user_type !== "Admin" ? <Disclosure as="nav" className="bg-slate-500">
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">
             <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -232,7 +239,10 @@ function CommonNav() {
             ))}
           </div>
         </DisclosurePanel>
-      </Disclosure>
+      </Disclosure> : <div className="w-3/4 mx-auto rounded-full flex justify-between bg-slate-500 p-3 px-10 mt-5">
+            <div className="logo-font text-5xl text-white">WW</div>
+           <button onClick={handleBack} className="text-slate-300 hover:text-white"><FontAwesomeIcon icon={faBackward} /> Back to Dashboard</button>
+        </div>}
     </div>
   )
 }

@@ -23,5 +23,6 @@ router.get('/wish-list/:user_id',setAccessController("*"),productController.getW
 router.patch('/order-product/:auth_id/:product_id',setAccessController("2,3"),productController.buyProduct);
 router.get('/categories',setAccessController('*'),productController.categories);
 router.get('/seller-products/:seller_id',setAccessController("1,2"),productController.seller_products);
+router.get('/products-bought/:user_id',setAccessController('*'),productController.getProuctsBought);
 
 module.exports = router;

@@ -8,6 +8,7 @@ import AddToCart from "../../components/add-to-cart/AddToCart";
 import CommonNav from "../../components/nav/common-nav/CommonNav";
 import RemoveFromWishList from "../../components/remove-from-wish-list/RemoveFromWishList";
 import { Link } from "react-router-dom";
+import Footer from "../../components/footer/Footer"
 
 function WishList() {
   const [products, setProducts] = useState([]);
@@ -123,6 +124,7 @@ function WishList() {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

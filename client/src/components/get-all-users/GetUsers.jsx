@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-async function GetUsers(token, user_type) {
+async function GetUsers(auth_id, user_type) {
+    let token = localStorage.getItem(auth_id);
     try {
         let response = await axios({
             method : "GET",

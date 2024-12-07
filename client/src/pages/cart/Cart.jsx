@@ -9,6 +9,7 @@ import { faCartShopping, faHeart, faIndianRupee } from "@fortawesome/free-solid-
 import useCheckLogin from "../../components/check-login/useCheckLogin";
 import RemoveFromCart from "../../components/remove-from-cart/RemoveFromCart";
 import AddToWishList from "../../components/add-to-wish-list/AddToWishList";
+import Footer from "../../components/footer/Footer"
 
 function Cart() {
   const navigate = useNavigate();
@@ -173,6 +174,7 @@ function Cart() {
           </ul>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

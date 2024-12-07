@@ -18,12 +18,12 @@ function BlockUnblock() {
 
   const fetchUsers = useCallback(async () => {
     try {
-      const allUsers = await GetUsers(token, user_type);
+      const allUsers = await GetUsers(auth_id, user_type);
       setUsers(allUsers);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
-  }, [token, user_type]);
+  }, [auth_id, user_type]);
 
   const handleAction = useCallback(
     async (user_id, action) => {

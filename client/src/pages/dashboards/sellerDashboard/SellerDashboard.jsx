@@ -20,6 +20,7 @@ import SellerProfile from './seller-dashboard-contents/SellerProfile';
 import EditSellerProfile from './seller-dashboard-contents/EditSellerProfile';
 import AddProduct from './seller-dashboard-contents/AddProduct';
 import RemoveProducts from './seller-dashboard-contents/RemoveProducts';
+import Stocks from '../../stocks/Stocks';
 
 
 const subCategories = [
@@ -145,7 +146,7 @@ export default function SellerDashboard() {
                 <div className='p-5 rounded-xl border'>
                   {activeContent === "Profile" && <SellerProfile />}
                   {activeContent === "edit your details" && <EditSellerProfile />}
-                  {activeContent === "Your Products" && <SellerProducts />}
+                  {activeContent === "Your Products" && <Stocks />}
                   {activeContent === "Add products" && <AddProduct />}
                   {/* {activeContent === "Update your product details" && <EditProduct />} */}
                   {activeContent === "Remove your product" && <RemoveProducts />}

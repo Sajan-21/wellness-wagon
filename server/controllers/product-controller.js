@@ -391,6 +391,8 @@ exports.buyProduct = async function(req, res) {
         let seller_id = product.seller_id;
         let seller = await users.findOne({_id : seller_id});
         let buyer = await users.findOne({_id : buyer_id});
+        let quantity = req.body.quantity;
+        let price = req.body.totalPrice;
 
         if(!buyer.pincode || buyer.pincode == "" || buyer.pincode == "not specified" || buyer.pincode == undefined || buyer.pincode == null || buyer.pincode == "N/A" || !buyer.house_name || buyer.house_name == "" || buyer.house_name == "not specified" || buyer.house_name == undefined || buyer.house_name == null || buyer.house_name == "N/A" || !buyer.postal_area || buyer.postal_area == "" || buyer.postal_area == "not specified" || buyer.postal_area == undefined || buyer.postal_area == null || buyer.postal_area == "N/A" || !buyer.state || buyer.state == "" || buyer.state == "not specified" || buyer.state == undefined || buyer.state == null || buyer.state == "N/A" ){
             let response = error_function({
@@ -411,10 +413,10 @@ exports.buyProduct = async function(req, res) {
             res.status(response.statusCode).send(response);
             return;
         }else{
-            // let order_email_template_seller = await orderMailSeller_template(buyer,product);
+            // let order_email_template_seller = await orderMailSeller_template(buyer,product, quantity, price);
             //await sendEmail(seller.email, "new order", order_email_template_seller);
 
-            // let order_email_template_admin = await orderMailAdmin_template(buyer, seller, product);
+            // let order_email_template_admin = await orderMailAdmin_template(buyer, seller, product, quantity, price);
             // await sendEmail(buyer.email, "new order", order_email_template_admin);
 
             if(product.stock_count === 1){
@@ -423,7 +425,7 @@ exports.buyProduct = async function(req, res) {
                 // await sendEmail(seller.email, "out of stock", out_of_stock_template);
             };
 
-            // let order_email_template_buyer = await orderMailBuyer_template(buyer, product);
+            // let order_email_template_buyer = await orderMailBuyer_template(buyer, product, quantity, price);
             // await sendEmail(buyer.email, "order placed", order_email_template_buyer);
 
             let stock_count = product.stock_count - 1;
@@ -447,6 +449,44 @@ exports.buyProduct = async function(req, res) {
             success : false,
             statusCode : 400,
             message : error.message ? error.message : error,
+        });
+        res.status(response.statusCode).send(response);
+        return;
+    }
+}
+
+exports.getProuctsBought = async function (req, res) {
+    try {
+        const id = req.params.user_id;
+        const user = await users.findOne({ _id: id });
+
+        if (!user || !user.products_bought) {
+            throw new Error("User or products_bought not found");
+        }
+        const products_bought = user.products_bought;
+
+        const get_products_bought = await Promise.all(
+            products_bought.map(async (_id) => {
+                console.log("_id:", _id);
+                const product = await products.findOne({ _id });
+                console.log("Product:", product);
+                return product;
+            })
+        );
+
+        const response = success_function({
+            success: true,
+            statusCode: 200,
+            data: get_products_bought,
+        });
+
+        res.status(response.statusCode).send(response);
+        return;
+    } catch (error) {
+        const response = error_function({
+            success: false,
+            statusCode: 400,
+            message: error.message || error,
         });
         res.status(response.statusCode).send(response);
         return;

@@ -1,12 +1,17 @@
 import axios from "axios";
 
-async function OrderProduct(auth_id, product_id) {
+async function OrderProduct(auth_id, product_id, body) {
     try {
         let token = localStorage.getItem(auth_id);
         let response = await axios({
             method : "PATCH",
             url : `http://localhost:3000/order-product/${auth_id}/${product_id}`,
-            headers : {Authorization : `Bearer ${token}`}
+            headers : {Authorization : `Bearer ${token}`},
+            data : {
+                quantity : body.quantity,
+                totalPrice : body.totalPrice
+            }
+
         });
         console.log("response : ",response);
         return response.data;

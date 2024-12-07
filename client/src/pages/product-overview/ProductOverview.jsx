@@ -9,6 +9,11 @@ import CommonNav from "../../components/nav/common-nav/CommonNav";
 import useCheckLogin from "../../components/check-login/useCheckLogin";
 import AddToCart from "../../components/add-to-cart/AddToCart";
 import AddToWishList from "../../components/add-to-wish-list/AddToWishList";
+import Footer from "../../components/footer/Footer"
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 function ProductOverview() {
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -147,7 +152,7 @@ const handleOrder = useCallback(async (product_id) => {
                 Product by <span className="text-xl">{product.brand}</span>
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-5 max-sm:flex max-sm:justify-evnely p-3">
+            <div className={classNames(params.user_type == "Admin" || params.auth_id == product_id ? "hidden" : "grid grid-cols-1 gap-5 max-sm:flex max-sm:justify-evnely p-3")}>
               <button onClick={() => handleWishList(`${product._id}`)} className=" border max-sm:px-3 max-md:text-xs border-red-600 text-red-600 hover:bg-red-600 hover:text-white rounded-xl flex justify-center items-center gap-3">
                 <FontAwesomeIcon
                   icon={faHeart}
@@ -180,6 +185,7 @@ const handleOrder = useCallback(async (product_id) => {
           <ProductsListing products={similarProducts} heading={"Similar Products"} />
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

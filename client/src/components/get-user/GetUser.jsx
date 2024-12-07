@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-const GetUser = async (auth_id) => {
-  const token = localStorage.getItem(auth_id);
+const GetUser = async (auth_id, token) => {
+  console.log(token, auth_id);
+  
   try {
     const response = await axios.get(`http://localhost:3000/user/${auth_id}`, {
       headers: { Authorization: `Bearer ${token}` },

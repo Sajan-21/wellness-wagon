@@ -20,6 +20,8 @@ import { faCircleInfo,faUserTag, faPeopleGroup, faUserLargeSlash } from '@fortaw
 import WWinfo from './admin-page-contents/WWinfo';
 import BlockUnblock from './admin-page-contents/BlockUnblock';
 import AdminNav from './admin-page-contents/AdminNav';
+import Sellers from './admin-page-contents/Sellers';
+import Buyers from './admin-page-contents/Buyers';
 
 
 const subCategories = [
@@ -120,8 +122,10 @@ export default function AdminDashboard() {
 
               {/* Product grid */}
               <div className="col-span-3">
-                <div className='p-5 rounded-xl border'>
+                <div className={classNames(activeContent !== "Wellness Wagon" ? 'p-5 rounded-xl border' : 'rounded-xl border')}>
                   {activeContent === "Wellness Wagon" && <WWinfo />}
+                  {activeContent === "Sellers" && <Sellers />}
+                  {activeContent === "Buyers" && <Buyers />}
                   {activeContent === "Bocked/Unblocked users" && <BlockUnblock />}
                 </div>
               </div>

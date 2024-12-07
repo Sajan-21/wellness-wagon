@@ -255,9 +255,9 @@ function Nav() {
             SAY DAY ONE
           </div>
           <div>
-            <button className="text-2xl border text-m px-3 py-2 hover:bg-white hover:text-black hover:font-bold">
+            <Link to={!checkLogin ? `/shop` : `/shop/${params.auth_id}/${params.user_type}`}><button className="text-2xl border text-m px-3 py-2 hover:bg-white hover:text-black hover:font-bold">
               Shop Now
-            </button>
+            </button></Link>
           </div>
         </div>
       </div>

@@ -6,6 +6,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIndianRupee } from "@fortawesome/free-solid-svg-icons";
 import CommonNav from "../../components/nav/common-nav/CommonNav";
 import OrderProduct from "../../components/order-product/OrderProduct";
+import Footer from "../../components/footer/Footer"
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 function Billing() {
   const params = useParams();
@@ -13,6 +18,8 @@ function Billing() {
   const [product, setProduct] = useState({});
   const auth_id = params.auth_id;
   const [user, setUser] = useState({});
+
+  const [count, setCount] = useState(1);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -26,10 +33,12 @@ function Billing() {
     fetchProduct();
   }, [product_id]);
 
+  let token = localStorage.getItem(auth_id);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userData = await GetUser(auth_id);
+        const userData = await GetUser(auth_id, token);
         setUser(userData);
       } catch (error) {
         console.error("Error fetching user:", error);
@@ -41,8 +50,15 @@ function Billing() {
   console.log("Product:", product);
   console.log("User:", user);
 
+  let productPrice = product.price * count;
+  let saving = productPrice-(Math.round((80/100)*productPrice));
+  let shipping = 10;
+  let totalPrice = (productPrice - saving) + shipping;
+
+  let body={quantity : count, totalPrice}
+
   const handlePlaceOrder = useCallback(async() => {
-    const response = await OrderProduct(auth_id, product_id);
+    const response = await OrderProduct(auth_id, product_id, body);
     console.log("response from billing page : ",response);
     alert(response.message);
   },[auth_id, product_id]);
@@ -87,7 +103,7 @@ function Billing() {
           </div>
         </div>
         <div className="p-5 max-md:p-2 border-b-2">
-          <div className="py-4 flex justify-between items-start">
+          <div className="py-4 flex justify-between">
             {/* {product.description || "No additional details available."} */}
             <div className="">
               <ul className="space-y-2">
@@ -112,7 +128,18 @@ function Billing() {
               </ul>
             </div>
             <div>
-              <div className="">
+              <div className="flex flex-col gap-10">
+                <div className="flex gap-10">
+                  <div className="text-lg">
+                    Quantity
+                  </div>
+                  <div className="">
+                    <button className={classNames(count == 1 ? "hidden" : "border border-black px-3 rounded-s text-lg")} onClick={() => setCount(count - 1)} >-</button>
+                    <button className="border border-black px-3 text-lg">{count}</button>
+                    <button className="border border-black px-3 rounded-e text-lg" onClick={() => setCount(count + 1)}>+</button>
+                  </div>
+                </div>
+                <div>
                 <div className="text-lg font-semibold pb-3">Payment Method</div>
                 <select className="p-3 border-2">
                   <option className="py-2" value="" disabled>
@@ -128,6 +155,7 @@ function Billing() {
                     Cash on delivery
                   </option>
                 </select>
+                </div>
               </div>
             </div>
           </div>
@@ -135,20 +163,20 @@ function Billing() {
         <div className="py-5">
         <ul className="bg-white rounded-2xl p-2">
             <li className="flex gap-10 justify-between items-center w-3/4 mx-auto border-b pt-5 pb-2">
-              <span>Total products Price</span>
-              <span><FontAwesomeIcon icon={faIndianRupee} /> {product.price} </span>
+              <span>Product Price</span>
+              <span><FontAwesomeIcon icon={faIndianRupee} /> {productPrice} </span>
             </li>
             <li className="flex gap-10 justify-between items-center w-3/4 mx-auto border-b pt-5 pb-2">
               <span>You are saving (20% off)</span>
-              <span><FontAwesomeIcon icon={faIndianRupee} /> {product.price-(Math.round((80/100)*product.price))} </span>
+              <span><FontAwesomeIcon icon={faIndianRupee} /> {saving} </span>
             </li>
             <li className="flex gap-10 justify-between items-center w-3/4 mx-auto border-b pt-5 pb-2">
               <span>Shipping</span>
-              <span><FontAwesomeIcon icon={faIndianRupee}  /> 10 </span>
+              <span><FontAwesomeIcon icon={faIndianRupee}  /> {shipping} </span>
             </li>
             <li className="flex gap-10 justify-between items-center w-3/4 mx-auto pt-5 pb-2">
               <span>Total price</span>
-              <span><FontAwesomeIcon icon={faIndianRupee} /> {Math.round((80/100)*product.price) + 10} </span>
+              <span><FontAwesomeIcon icon={faIndianRupee} /> {totalPrice} </span>
             </li>
             <li className="flex justify-center items-center  pt-5">
             <button className="border p-4 hover:bg-indigo-600 bg-slate-600 text-white font-semibold rounded-sm" onClick={handlePlaceOrder}>
@@ -159,6 +187,7 @@ function Billing() {
         </div>
       </div>
     </div>
+    <Footer />
     </div>
   );
 }
