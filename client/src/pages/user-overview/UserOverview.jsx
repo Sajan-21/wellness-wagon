@@ -205,14 +205,6 @@ function UserOverview() {
                         {product.price}
                       </p>
                     </div>
-                    <div
-                      className="max-lg:w-full mt-3"
-                      onClick={() => handleProductOverview(`${product._id}`)}
-                    >
-                      <button className="w-full border px-5 py-3 rounded-2xl hover:border-indigo-600 hover:text-indigo-600">
-                        View Product
-                      </button>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -258,14 +250,6 @@ function UserOverview() {
                         )}{" "}
                         {product.price}
                       </p>
-                    </div>
-                    <div
-                      className="max-lg:w-full mt-3"
-                      onClick={() => handleProductOverview(`${product._id}`)}
-                    >
-                      <button className="w-full border px-5 py-3 rounded-2xl hover:border-indigo-600 hover:text-indigo-600">
-                        View Product
-                      </button>
                     </div>
                   </div>
                 </div>

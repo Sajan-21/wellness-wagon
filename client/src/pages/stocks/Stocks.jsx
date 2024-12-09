@@ -33,6 +33,10 @@ function Stocks() {
     navigate(`/product-overview/${params.auth_id}/${params.user_type}/${product_id}`);
   }
 
+  const handleUpdatePage = (product_id) => {
+    navigate(`/update-product/${params.auth_id}/${params.user_type}/${product_id}`);
+  }
+
   return (
     <div>
     <div className={classNames(params.user_type == "Seller" ? "hidden" : "w-3/4 mx-auto rounded-full flex justify-between bg-slate-500 p-3 px-10 mt-5")}>
@@ -69,6 +73,7 @@ function Stocks() {
                       {product.stock_count} Stocks left
                     </p>
                   </div>
+                  <div className='py-3'><button onClick={() => handleUpdatePage(`${product._id}`)} className='border-indigo-600 border px-3 py-2 rounded text-indigo-600 hover:bg-indigo-600 hover:text-white'>Update product</button></div>
                 </div>
               </div>
             </div>

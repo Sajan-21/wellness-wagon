@@ -152,7 +152,7 @@ const handleOrder = useCallback(async (product_id) => {
                 Product by <span className="text-xl">{product.brand}</span>
               </div>
             </div>
-            <div className={classNames(params.user_type == "Admin" || params.auth_id == product_id ? "hidden" : "grid grid-cols-1 gap-5 max-sm:flex max-sm:justify-evnely p-3")}>
+            <div className={classNames(params.user_type == "Admin" || params.auth_id == product.seller_id ? "hidden" : "grid grid-cols-1 gap-5 max-sm:flex max-sm:justify-evnely p-3")}>
               <button onClick={() => handleWishList(`${product._id}`)} className=" border max-sm:px-3 max-md:text-xs border-red-600 text-red-600 hover:bg-red-600 hover:text-white rounded-xl flex justify-center items-center gap-3">
                 <FontAwesomeIcon
                   icon={faHeart}
@@ -167,9 +167,20 @@ const handleOrder = useCallback(async (product_id) => {
                 />
                 <p className="max-sm:hidden">ADD TO CART</p>
               </button>
-              <button onClick={() => handleOrder(`${product._id}`)} className="py-1 border max-sm:px-3 border-green-600 text-green-600 hover:bg-green-600 hover:text-white rounded-xl flex justify-center items-center gap-3">
-                BUY NOW
-              </button>
+              <button
+    className="py-1 border max-sm:px-3 border-green-600 text-green-600 hover:bg-green-600 hover:text-white rounded-xl flex justify-center items-center gap-3"
+    onClick={() => {
+      if (!isLoggedIn) {
+        alert("You are not allowed to continue without login/sign-up");
+        return;
+      }
+      navigate(`/billing/${params.auth_id}/${params.user_type}`, {
+        state: { product_ids: product._id },
+      });
+    }}
+  >
+    BUYNOW
+  </button>
             </div>
           </div>
           <div className="p-5 max-md:p-2">

@@ -1,193 +1,179 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import axios from "axios";
 import GetProduct from "../../components/get-product/GetProduct";
-import GetUser from "../../components/get-user/GetUser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIndianRupee } from "@fortawesome/free-solid-svg-icons";
 import CommonNav from "../../components/nav/common-nav/CommonNav";
-import OrderProduct from "../../components/order-product/OrderProduct";
-import Footer from "../../components/footer/Footer"
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import Footer from "../../components/footer/Footer";
 
 function Billing() {
-  const params = useParams();
-  const product_id = params.product_id;
-  const [product, setProduct] = useState({});
-  const auth_id = params.auth_id;
-  const [user, setUser] = useState({});
-
-  const [count, setCount] = useState(1);
-
+  const { state } = useLocation();
+  const { auth_id } = useParams();
+  const [cartItems, setCartItems] = useState([]);
+console.log("state : ",state);
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       try {
-        const productData = await GetProduct(product_id);
-        setProduct(productData);
+        const productIds = Array.isArray(state?.product_ids)
+          ? state.product_ids
+          : [state?.product_ids];
+        const products = await Promise.all(
+          productIds.map(async (id) => {
+            const productData = await GetProduct(id);
+            console.log("product : ",productData);
+            return {
+              product_id: productData._id,
+              name: productData.name,
+              price: productData.price,
+              images : productData.images,
+              category : productData.category,
+              quantity: 1,
+            };
+          })
+        );
+        setCartItems(products);
       } catch (error) {
-        console.error("Error fetching product:", error);
+        console.error("Error fetching products:", error);
       }
     };
-    fetchProduct();
-  }, [product_id]);
+    fetchData();
+  }, [state]);
 
-  let token = localStorage.getItem(auth_id);
+  const handleQuantityChange = (product_id, change) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.product_id === product_id
+          ? { ...item, quantity: Math.max(1, item.quantity + change) }
+          : item
+      )
+    );
+  };
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const userData = await GetUser(auth_id, token);
-        setUser(userData);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-    fetchUser();
-  }, [auth_id]);
+  const calculateTotal = () => {
+    return cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+  };
 
-  console.log("Product:", product);
-  console.log("User:", user);
+  const calculateDiscount = (total) => total * 0.2;
 
-  let productPrice = product.price * count;
-  let saving = productPrice-(Math.round((80/100)*productPrice));
-  let shipping = 10;
-  let totalPrice = (productPrice - saving) + shipping;
+  const calculateFinalTotal = () => {
+    const subtotal = calculateTotal();
+    const discount = calculateDiscount(subtotal);
+    const shipping = 10;
+    return subtotal + shipping - discount;
+  };
 
-  let body={quantity : count, totalPrice}
+  const handlePlaceOrder = async () => {
+    try {
+      const orderData = cartItems.map((item) => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+      }));
 
-  const handlePlaceOrder = useCallback(async() => {
-    const response = await OrderProduct(auth_id, product_id, body);
-    console.log("response from billing page : ",response);
-    alert(response.message);
-  },[auth_id, product_id]);
+      const response = await axios({
+        method: "PATCH",
+        url: `http://localhost:3000/order-products/${auth_id}`,
+        headers: { Authorization: `Bearer ${localStorage.getItem(auth_id)}` },
+        data: orderData,
+      });
+      console.log("Order placed successfully:", response.data);
+      alert("Order placed successfully!");
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Failed to place order. Please try again.");
+    }
+  };
 
+  console.log("cartItems : ",cartItems);
   return (
     <div className="bg-slate-200">
-        <CommonNav />
-        <div className="border-2 w-4/5 mx-auto p-10 py-5 grid grid-cols-2 max-lg:grid-cols-1 bg-white">
-      <div className="grid grid-cols-1">
-        {/* Ensure product.images exists */}
-        {product.images && product.images.length > 0 ? (
-          <>
-            <div className="p-2 max-md:p-2 max-lg:p-2 flex justify-center">
-              <img
-                className="rounded-3xl shadow-lg"
-                src={`http://localhost:3000/${product.images[0]}`}
-                alt="Product Image 1"
-              />
-            </div>
-          </>
-        ) : (
-          <p>Loading images...</p> // Placeholder while images are loading
-        )}
-      </div>
-      <div>
-        <div className="p-5 grid grid-cols-2 max-sm:grid-cols-1 max-md:p-3 border-b-2">
-          <div className="py-3 space-y-5">
-            <div className="text-2xl font-semibold">
-              <p>{product.name || "Loading product name..."}</p>
-            </div>
-            <div className="text-lg">
-              {product.category || "Loading category..."}
-            </div>
-            <div className="text-xl">
-              {product.price_currency === "$" ? (
-                price_currency
-              ) : (
-                <FontAwesomeIcon icon={faIndianRupee} />
-              )}
-              {product.price}
-            </div>
-          </div>
-        </div>
-        <div className="p-5 max-md:p-2 border-b-2">
-          <div className="py-4 flex justify-between">
-            {/* {product.description || "No additional details available."} */}
-            <div className="">
-              <ul className="space-y-2">
-                <div className="text-lg font-semibold">
-                  delivery address details
+      <CommonNav />
+      <div className="w-4/5 mx-auto p-10 bg-white">
+        <h1 className="text-3xl font-bold mb-5">Billing Details</h1>
+        <div className="grid grid-cols-2 gap-5">
+          <div>
+            {cartItems.map((item) => (
+              <div key={item._id} className="p-4 border-b">
+                <div >
+                  {item.images && item.images.length > 0 ? (
+                    <>
+                      <div className="p-2 max-md:p-2 max-lg:p-2">
+                        <img
+                          className="size-32 shadow-lg billing-product-img"
+                          src={`http://localhost:3000/${item.images[0]}`}
+                          alt="Product Image 1"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <p>Loading images...</p>
+                  )}
                 </div>
-                <li>
-                  {user.house_name
-                    ? user.house_name
-                    : "please update your house name !!!"}
-                </li>
-                <li>
-                  {user.postal_area
-                    ? user.postal_area
-                    : "please update your postal area !!!"}
-                </li>
-                <li>
-                  {user.pincode
-                    ? user.pincode
-                    : "please update your pincode !!!"}
-                </li>
-              </ul>
-            </div>
-            <div>
-              <div className="flex flex-col gap-10">
-                <div className="flex gap-10">
-                  <div className="text-lg">
-                    Quantity
-                  </div>
-                  <div className="">
-                    <button className={classNames(count == 1 ? "hidden" : "border border-black px-3 rounded-s text-lg")} onClick={() => setCount(count - 1)} >-</button>
-                    <button className="border border-black px-3 text-lg">{count}</button>
-                    <button className="border border-black px-3 rounded-e text-lg" onClick={() => setCount(count + 1)}>+</button>
-                  </div>
-                </div>
-                <div>
-                <div className="text-lg font-semibold pb-3">Payment Method</div>
-                <select className="p-3 border-2">
-                  <option className="py-2" value="" disabled>
-                    --select payment method
-                  </option>
-                  <option className="py-2" value="">
-                    Credit or Debit card
-                  </option>
-                  <option className="py-2" value="">
-                    Net Banking
-                  </option>
-                  <option className="py-2" value="">
-                    Cash on delivery
-                  </option>
-                </select>
-                </div>
+                <h3 className="text-lg font-semibold">{item.name}</h3>
+                <p>
+                  <FontAwesomeIcon icon={faIndianRupee} /> {item.price} x{" "}
+                  <button
+                    className="border px-3 rounded"
+                    onClick={() => handleQuantityChange(item.product_id, -1)}
+                    disabled={item.quantity === 1}
+                  >
+                    -
+                  </button>
+                  <span className="mx-3">{item.quantity}</span>
+                  <button
+                    className="border px-3 rounded"
+                    onClick={() => handleQuantityChange(item.product_id, 1)}
+                  >
+                    +
+                  </button>
+                </p>
               </div>
-            </div>
+            ))}
+          </div>
+          <div>
+            <ul className="bg-gray-100 p-5 rounded">
+              <li className="flex justify-between border-b pb-2">
+                <span>Subtotal</span>
+                <span>
+                  <FontAwesomeIcon icon={faIndianRupee} /> {calculateTotal()}
+                </span>
+              </li>
+              <li className="flex justify-between border-b pb-2">
+                <span>Shipping</span>
+                <span>
+                  <FontAwesomeIcon icon={faIndianRupee} /> 10
+                </span>
+              </li>
+              <li className="flex justify-between border-b pb-2">
+                <span>Discount (20%)</span>
+                <span className="text-red-500">
+                  -<FontAwesomeIcon icon={faIndianRupee} />{" "}
+                  {Math.round(calculateDiscount(calculateTotal()))}
+                </span>
+              </li>
+              <li className="flex justify-between border-b pb-2 font-bold">
+                <span>Total</span>
+                <span>
+                  <FontAwesomeIcon icon={faIndianRupee} />{" "}
+                  {calculateFinalTotal()}
+                </span>
+              </li>
+              <li className="mt-4">
+                <button
+                  className="w-full bg-indigo-600 text-white py-3 rounded"
+                  onClick={handlePlaceOrder}
+                >
+                  Place Order
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
-        <div className="py-5">
-        <ul className="bg-white rounded-2xl p-2">
-            <li className="flex gap-10 justify-between items-center w-3/4 mx-auto border-b pt-5 pb-2">
-              <span>Product Price</span>
-              <span><FontAwesomeIcon icon={faIndianRupee} /> {productPrice} </span>
-            </li>
-            <li className="flex gap-10 justify-between items-center w-3/4 mx-auto border-b pt-5 pb-2">
-              <span>You are saving (20% off)</span>
-              <span><FontAwesomeIcon icon={faIndianRupee} /> {saving} </span>
-            </li>
-            <li className="flex gap-10 justify-between items-center w-3/4 mx-auto border-b pt-5 pb-2">
-              <span>Shipping</span>
-              <span><FontAwesomeIcon icon={faIndianRupee}  /> {shipping} </span>
-            </li>
-            <li className="flex gap-10 justify-between items-center w-3/4 mx-auto pt-5 pb-2">
-              <span>Total price</span>
-              <span><FontAwesomeIcon icon={faIndianRupee} /> {totalPrice} </span>
-            </li>
-            <li className="flex justify-center items-center  pt-5">
-            <button className="border p-4 hover:bg-indigo-600 bg-slate-600 text-white font-semibold rounded-sm" onClick={handlePlaceOrder}>
-              Place Order
-            </button>
-            </li>
-          </ul>
-        </div>
       </div>
-    </div>
-    <Footer />
+      <Footer />
     </div>
   );
 }

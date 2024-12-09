@@ -69,14 +69,14 @@ function Cart() {
     window.location.reload();
   },[params.auth_id]);
 
-  const handleOrder = useCallback(async (product_id) => {
-    if (!isLoggedIn) {
-      alert("You are not allowed to continue without login/sign-up");
-      return;
-    }else{
-      navigate(`/billing/${params.auth_id}/${params.user_type}/${product_id}`);
-    }
-  }, [isLoggedIn, params.auth_id, params.user_type]);
+  // const handleOrder = useCallback(async (product_id) => {
+  //   if (!isLoggedIn) {
+  //     alert("You are not allowed to continue without login/sign-up");
+  //     return;
+  //   }else{
+  //     navigate(`/billing/${params.auth_id}/${params.user_type}/${product_id}`);
+  //   }
+  // }, [isLoggedIn, params.auth_id, params.user_type]);
 
   return (
     <div className="bg-slate-200">
@@ -167,9 +167,22 @@ function Cart() {
               <span><FontAwesomeIcon icon={faIndianRupee} /> {Math.round((80/100)*totalProductsPrice) + products.length*10} </span>
             </li>
             <li className="flex justify-center items-center  pt-5">
-            <button className="border rounded-b-2xl w-full p-4 hover:bg-indigo-600 bg-slate-600 text-white font-semibold rounded-sm">
-              BUY ALL NOW
-            </button>
+            <button
+    className="border rounded-b-2xl w-full p-4 hover:bg-indigo-600 bg-slate-600 text-white font-semibold rounded-sm"
+    onClick={() => {
+      if (!isLoggedIn) {
+        alert("You are not allowed to continue without login/sign-up");
+        return;
+      }
+      // Pass all product IDs to the billing page
+      const productIds = products.map((product) => product._id);
+      navigate(`/billing/${params.auth_id}/${params.user_type}`, {
+        state: { product_ids: productIds },
+      });
+    }}
+  >
+    BUY ALL NOW
+  </button>
             </li>
           </ul>
         </div>

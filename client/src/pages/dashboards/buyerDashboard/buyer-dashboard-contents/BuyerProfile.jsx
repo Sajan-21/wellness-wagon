@@ -11,7 +11,7 @@ function BuyerProfile() {
 
     useEffect(() => {
       const fetchSeller = async () => {
-        const sellerData = await GetUser(auth_id);
+        const sellerData = await GetUser(auth_id, token);
         setSeller(sellerData);
       };
     

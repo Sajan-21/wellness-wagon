@@ -34,7 +34,7 @@ export default function EditBuyerProfile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        let response = await GetUser(auth_id);
+        let response = await GetUser(auth_id, token);
         console.log("response from edit getuser : ", response);
         setBuyer({
           ...buyer,

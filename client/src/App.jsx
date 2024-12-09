@@ -15,6 +15,7 @@ import BuyerDashboard from "./pages/dashboards/buyerDashboard/BuyerDashboard";
 import UserOverview from "./pages/user-overview/UserOverview";
 import Orders from "./pages/orders/Orders";
 import Stocks from "./pages/stocks/Stocks";
+import UpdateProduct from "./pages/update-product/UpdateProduct";
 
 function App() {
   return (
@@ -34,10 +35,12 @@ function App() {
           <Route path="/product-overview/:auth_id/:user_type/:product_id" exact element={<ProductOverview />} />
           <Route path="/wish-list/:auth_id/:user_type" exact element={<WishList />} />
           <Route path="/cart/:auth_id/:user_type" exact element={<Cart />} />
-          <Route path="/billing/:auth_id/:user_type/:product_id" exact element={<Billing />} />
+          <Route path="/billing/:auth_id/:user_type" element={<Billing />} />
+          <Route path="/billing/:auth_id/:user_type/:product_id" element={<Billing />} />
           <Route path="/user-overview/:auth_id/:user_type/:user_id" exact element={<UserOverview />} />
           <Route path="/orders/:auth_id/:user_type/:user_id" exact element={<Orders />} />
           <Route path="/stocks/:auth_id/:user_type/:user_id" exact element={<Stocks />} />
+          <Route path="/update-product/:auth_id/:user_type/:product_id" element={<UpdateProduct />} />
         </Routes>
       </Router>
     </>
