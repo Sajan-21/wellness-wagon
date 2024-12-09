@@ -1,4 +1,4 @@
-exports.orderMailAdmin = function (buyer,seller, product, quantity, price) {
+exports.orderMailAdmin = function (buyer,seller, product) {
     return new Promise(async (resolve, reject) => {
       try {
         let template = `<!DOCTYPE html>
@@ -69,8 +69,8 @@ exports.orderMailAdmin = function (buyer,seller, product, quantity, price) {
           <p>product details : </p>
         <ul>
           <li>${product._id}</li>
-          <li>${quantity} items</li>
-          <li>${price}</li>
+          <li>${product.quantity} items</li>
+          <li>${product.price}</li>
         </ul>
         </div>
         

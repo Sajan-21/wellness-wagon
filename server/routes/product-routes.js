@@ -20,7 +20,7 @@ router.get('/cart/:user_id',setAccessController("*"),productController.getCartPr
 router.patch('/wish-list/:auth_id/:product_id',setAccessController("2,3"),productController.wish_lists);
 router.patch('/remove-from-wish-lists/:auth_id/:product_id',setAccessController("2,3"),productController.removeFromWish_lists);
 router.get('/wish-list/:user_id',setAccessController("*"),productController.getWishListProducts);
-router.patch('/order-product/:auth_id/:product_id',setAccessController("2,3"),productController.buyProduct);
+router.patch('/order-products/:auth_id',setAccessController("2,3"),productController.buyProducts);
 router.get('/categories',setAccessController('*'),productController.categories);
 router.get('/seller-products/:seller_id',setAccessController("1,2"),productController.seller_products);
 router.get('/products-bought/:user_id',setAccessController('*'),productController.getProuctsBought);

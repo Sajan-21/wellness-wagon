@@ -70,8 +70,15 @@ exports.addProduct = async function(req, res) {
 exports.updateProduct = async function(req, res) {
     try {
         let body = req.body;
+        console.log("body : ",body);
         let _id = req.params.product_id;
-        await users.updateOne({_id },{$set : {stock_count : body.stock_count, description : body.description, price : body.price, name : body.name}});
+        await products.updateOne({_id },{$set : {stock_count : body.stock_count,
+            description : body.description,
+            price : body.price,
+            name : body.name,
+            category : body.category,
+            brand : body.brand,
+        }});
         let response = success_function({
             success : true,
             statusCode : 200,
@@ -383,72 +390,119 @@ exports.getWishListProducts = async function (req, res) {
     }
 }
 
-exports.buyProduct = async function(req, res) {
+exports.buyProducts = async function(req, res) {
     try {
         let buyer_id = req.params.auth_id;
-        let product_id = req.params.product_id;
-        let product = await products.findOne({_id : product_id});
-        let seller_id = product.seller_id;
-        let seller = await users.findOne({_id : seller_id});
-        let buyer = await users.findOne({_id : buyer_id});
-        let quantity = req.body.quantity;
-        let price = req.body.totalPrice;
+        let body = req.body;
+        console.log("body : ", body);
 
-        if(!buyer.pincode || buyer.pincode == "" || buyer.pincode == "not specified" || buyer.pincode == undefined || buyer.pincode == null || buyer.pincode == "N/A" || !buyer.house_name || buyer.house_name == "" || buyer.house_name == "not specified" || buyer.house_name == undefined || buyer.house_name == null || buyer.house_name == "N/A" || !buyer.postal_area || buyer.postal_area == "" || buyer.postal_area == "not specified" || buyer.postal_area == undefined || buyer.postal_area == null || buyer.postal_area == "N/A" || !buyer.state || buyer.state == "" || buyer.state == "not specified" || buyer.state == undefined || buyer.state == null || buyer.state == "N/A" ){
+        // Fetch buyer
+        let buyer = await users.findOne({ _id: buyer_id });
+        if (!buyer || !buyer.pincode || buyer.pincode == "not specified" || buyer.pincode == undefined || !buyer.house_name || buyer.house_name == "not specified" || !buyer.postal_area || buyer.postal_area == "not specified" || !buyer.state || buyer.state == "not specified") {
             let response = error_function({
-                success : false,
-                statusCode : 400,
-                message : "something is missing in your address, please try again",
+                success: false,
+                statusCode: 400,
+                message: "something is missing in your address, please try again",
             });
             res.status(response.statusCode).send(response);
             return;
         }
 
-        if(product.stock_count === 0){
+        // Fetch products with quantity
+        const productsWithQuantity = await Promise.all(
+            body.map(async (item) => {
+                const product = await products.findOne({ _id: item.product_id });
+                if (!product) {
+                    throw new Error(`Product with ID ${item.product_id} not found`);
+                }
+                return {
+                    ...product.toObject(),
+                    quantity: item.quantity,
+                };
+            })
+        );
+        console.log("orderProducts: ", productsWithQuantity);
+
+        // Fetch sellers
+        const sellerIds = [...new Set(productsWithQuantity.map(item => item.seller_id))];
+        const sellers = await Promise.all(
+            sellerIds.map(async (_id) => {
+                const seller = await users.findOne({ _id });
+                if (!seller) {
+                    throw new Error(`User with ID ${_id} not found`);
+                }
+                return { ...seller.toObject() };
+            })
+        );
+        console.log("sellers : ", sellers);
+
+        // Process each product in order
+        await Promise.all(productsWithQuantity.map(async (product) => {
+            try {
+                let seller = await users.findOne({ _id: product.seller_id });
+                if (!seller) {
+                    throw new Error(`Seller with ID ${product.seller_id} not found`);
+                }
+
+                if (product.stock_count === 0) {
+                    let response = error_function({
+                        success: false,
+                        statusCode: 400,
+                        message: "You can't buy this product, this product is out of stock",
+                    });
+                    res.status(response.statusCode).send(response);
+                    return;
+                } else if (product.stock_count === 1) {
+                    let out_of_stock_template = await outOfStockMail_template(seller, product);
+                    await sendEmail(seller.email, "out of stock", out_of_stock_template);
+                } else {
+                    // Notify seller about the new order
+                    // let order_email_template_seller = await orderMailSeller_template(buyer, product);
+                    // await sendEmail(seller.email, "new order", order_email_template_seller);
+
+                    // Notify admin and buyer about the order
+                    // let order_email_template_admin = await orderMailAdmin_template(buyer, seller, product);
+                    // await sendEmail("john@gmail.com", "new order", order_email_template_admin);
+
+                    // let order_email_template_buyer = await orderMailBuyer_template(buyer, product);
+                    // await sendEmail(buyer.email, "order placed", order_email_template_buyer);
+
+                    // Update stock and buyer's purchased products
+                    let stock_count = product.stock_count - 1;
+                    await products.updateOne({ _id: product._id }, { $set: { stock_count: stock_count } });
+                    await users.updateOne({ _id: buyer_id }, { $push: { products_bought: product._id } });
+
+                    // Update seller's profit
+                    let profit = Number(seller.profit) + product.price;
+                    await users.updateOne({ _id: seller._id }, { $set: { profit } });
+                }
+            } catch (error) {
+                console.log("Error: ", error);
             let response = error_function({
-                success : false,
-                statusCode : 400,
-                message : "you can't buy this product, this product is out of stock"
+                success: false,
+                statusCode: 400,
+                message: error.message || error,
             });
             res.status(response.statusCode).send(response);
             return;
-        }else{
-            // let order_email_template_seller = await orderMailSeller_template(buyer,product, quantity, price);
-            //await sendEmail(seller.email, "new order", order_email_template_seller);
+            }
+        }));
 
-            // let order_email_template_admin = await orderMailAdmin_template(buyer, seller, product, quantity, price);
-            // await sendEmail(buyer.email, "new order", order_email_template_admin);
-
-            if(product.stock_count === 1){
-
-                // let out_of_stock_template = await outOfStockMail_template(seller, product);
-                // await sendEmail(seller.email, "out of stock", out_of_stock_template);
-            };
-
-            // let order_email_template_buyer = await orderMailBuyer_template(buyer, product, quantity, price);
-            // await sendEmail(buyer.email, "order placed", order_email_template_buyer);
-
-            let stock_count = product.stock_count - 1;
-            await products.updateOne({product_id}, {$set : {stock_count : stock_count}});
-            await users.updateOne({_id : buyer_id}, {$push: {products_bought : product_id}});
-            let profit = Number(seller.profit) + product.price;
-            await users.updateOne({_id : seller_id},{$set : {profit}});
-        }
-
+        // Success response
         let response = success_function({
-            success : true,
-            statusCode : 200,
-            message : "order placed successfully",
+            success: true,
+            statusCode: 200,
+            message: "Order placed successfully",
         });
         res.status(response.statusCode).send(response);
         return;
 
     } catch (error) {
-        console.log("error : ",error);
+        console.log("Error: ", error);
         let response = error_function({
-            success : false,
-            statusCode : 400,
-            message : error.message ? error.message : error,
+            success: false,
+            statusCode: 400,
+            message: error.message || error,
         });
         res.status(response.statusCode).send(response);
         return;

@@ -17,7 +17,7 @@ app.use(express.json({limit : "10240mb"}));
 app.use(userRouter);
 app.use(authRouter);
 app.use(productRouter);
-app.use('/uploads',express.static("./uploads"));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(process.env.PORT, () => {
     console.log(`server running at http://localhost:${process.env.PORT}`);

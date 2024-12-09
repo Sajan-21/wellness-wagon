@@ -1,4 +1,4 @@
-exports.orderMailSeller = function (buyer, product, quantity, price) {
+exports.orderMailSeller = function (buyer, product) {
     return new Promise(async (resolve, reject) => {
       try {
         let template = `<!DOCTYPE html>
@@ -57,8 +57,8 @@ exports.orderMailSeller = function (buyer, product, quantity, price) {
         <ul>
           <li>Ordered by : ${buyer.name}</li>
           <li>product : ${product._id}</li>
-          <li>product : ${quantity}</li>
-          <li>price : ${price}</li>
+          <li>product : ${product.quantity}</li>
+          <li>price : ${product.price}</li>
         </ul>
       </div>
       <div class="footer">
