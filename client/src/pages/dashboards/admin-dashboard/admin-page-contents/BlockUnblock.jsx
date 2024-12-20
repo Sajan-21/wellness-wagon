@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
+// import Toast from "../../../../components/toast/Toast";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -15,6 +16,7 @@ function BlockUnblock() {
   const user_type = params.user_type;
   const token = localStorage.getItem(auth_id);
   const [users, setUsers] = useState([]);
+  // const [message, alert] = useState('');
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -56,11 +58,6 @@ function BlockUnblock() {
         {users.map((person) => (
           <li key={person.email} className="flex justify-between gap-x-6 py-5">
             <div className="flex min-w-0 gap-x-4">
-              <img
-                alt=""
-                src={person.imageUrl || "/placeholder.jpg"}
-                className="size-12 flex-none rounded-full bg-gray-50"
-              />
               <div className="min-w-0 flex-auto">
                 <p className="text-sm font-semibold text-gray-900">
                   {person.name}
@@ -141,6 +138,7 @@ function BlockUnblock() {
           </li>
         ))}
       </ul>
+      {/* <Toast message={message} /> */}
     </div>
   );
 }

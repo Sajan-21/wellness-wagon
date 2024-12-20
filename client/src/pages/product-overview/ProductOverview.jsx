@@ -9,7 +9,8 @@ import CommonNav from "../../components/nav/common-nav/CommonNav";
 import useCheckLogin from "../../components/check-login/useCheckLogin";
 import AddToCart from "../../components/add-to-cart/AddToCart";
 import AddToWishList from "../../components/add-to-wish-list/AddToWishList";
-import Footer from "../../components/footer/Footer"
+import Footer from "../../components/footer/Footer";
+// import Toast from "../../components/toast/Toast";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -22,6 +23,7 @@ function ProductOverview() {
   const params = useParams();
   const product_id = params.product_id;
   const isLoggedIn = useCheckLogin();
+  // const [message, alert] = useState('');
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -197,6 +199,7 @@ const handleOrder = useCallback(async (product_id) => {
         </div>
       </div>
       <Footer />
+      {/* <Toast message={message} /> */}
     </div>
   );
 }

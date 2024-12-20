@@ -8,7 +8,8 @@ import AddToCart from "../../components/add-to-cart/AddToCart";
 import CommonNav from "../../components/nav/common-nav/CommonNav";
 import RemoveFromWishList from "../../components/remove-from-wish-list/RemoveFromWishList";
 import { Link } from "react-router-dom";
-import Footer from "../../components/footer/Footer"
+import Footer from "../../components/footer/Footer";
+// import Toast from "../../components/toast/Toast";
 
 function WishList() {
   const [products, setProducts] = useState([]);
@@ -16,6 +17,7 @@ function WishList() {
   const auth_id = params.auth_id;
   const navigate = useNavigate();
   const isLoggedIn = useCheckLogin();
+  // const [message, alert] = useState('');
 
   const handleProductOverview = (product_id) => {
     !isLoggedIn ? navigate(`/product-overview/${product_id}`) : navigate(`/product-overview/${params.auth_id}/${params.user_type}/${product_id}`);
@@ -125,6 +127,7 @@ function WishList() {
         </div>
       </div>
       <Footer />
+      {/* <Toast message={message} /> */}
     </div>
   );
 }

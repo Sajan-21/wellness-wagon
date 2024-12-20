@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import GetUser from "../../../../components/get-user/GetUser";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+// import Toast from "../../../../components/toast/Toast";
 
 export default function EditBuyerProfile() {
   const [buyer, setBuyer] = useState({
@@ -16,6 +17,7 @@ export default function EditBuyerProfile() {
   const params = useParams();
   const auth_id = params.auth_id;
   let token = localStorage.getItem(auth_id);
+  // const [message, alert] = useState('');
 
   const handleUpdateUser = useCallback(async() => {
     let response = await axios({

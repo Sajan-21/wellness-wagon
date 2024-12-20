@@ -2,6 +2,7 @@ import {React,useState} from "react";
 import "./login.css";
 import { Link,useNavigate } from "react-router-dom";
 import axios from "axios";
+import Toast from "../../components/toast/Toast";
 
 function Login() {
 
@@ -9,6 +10,7 @@ function Login() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
 
     const handleLogin = async function(event) {
         event.preventDefault();
@@ -25,6 +27,7 @@ function Login() {
                 }
               });
             console.log("response : ",response);
+            setMessage(response.data.message);
             let data = response.data.data;
             let user_type = data.user_type;
             let auth_id = data.id;
@@ -38,7 +41,7 @@ function Login() {
 
         } catch (error) {
             console.log("error while login : ",error);
-            alert(error.response.data.message)
+            setMessage(error.response.data.message)
         }
     }
 
@@ -115,6 +118,7 @@ function Login() {
           </p>
         </div>
       </div>
+      <Toast message={message}/>
     </div>
   );
 }

@@ -1,15 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
 import SellerProducts from "../../../../components/seller-products/SellerProducts";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIndianRupee, faTrash } from "@fortawesome/free-solid-svg-icons";
 import DeleteProducts from "../../../../components/delete-products/DeleteProducts";
+// import Toast from "../../../../components/toast/Toast";
 
 function RemoveProducts() {
+  const navigate = useNavigate()
   const params = useParams();
   const auth_id = params.auth_id;
   const token = localStorage.getItem(auth_id);
   const [products, setProducts] = useState([]);
+  // const [message, alert] = useState('');
 
   useEffect(() => {
     const fetchSellerProducts = async () => {
@@ -26,6 +29,7 @@ function RemoveProducts() {
   console.log("products from remove page: ", products);
 
   const handleDeleteProduct = useCallback(async(product_id) => {
+    console.log("button clicked")
     let response = await DeleteProducts(token, auth_id, product_id);
     console.log("response : ",response);
     if(response.statusCode == 200){
@@ -33,6 +37,10 @@ function RemoveProducts() {
         window.location.reload();
     }
   },[token, auth_id]);
+
+  const handleProductOverview = (product_id) => {
+    navigate(`/product-overview/${params.auth_id}/${params.user_type}/${product_id}`);
+  }
 
   return (
     <div>
@@ -64,7 +72,7 @@ function RemoveProducts() {
                     </p>
                   </div>
                   <div className="text-end space-x-5">
-                    <button className="hover:text-xl hover:text-red-500"><FontAwesomeIcon icon={faTrash} onClick={() => handleDeleteProduct(`${product._id}`)} /> Remove</button>
+                    <button className="hover:text-xl hover:text-red-500" onClick={() => handleDeleteProduct(`${product._id}`)}><FontAwesomeIcon icon={faTrash} /> Remove</button>
                   </div>
                 </div>
               </div>
@@ -73,6 +81,7 @@ function RemoveProducts() {
         </div>
         </div>
       </div>
+      {/* <Toast message={message} /> */}
     </div>
   );
 }

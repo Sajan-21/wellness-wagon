@@ -6,11 +6,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIndianRupee } from "@fortawesome/free-solid-svg-icons";
 import CommonNav from "../../components/nav/common-nav/CommonNav";
 import Footer from "../../components/footer/Footer";
+// import Toast from "../../components/toast/Toast";
+import GetUser from "../../components/get-user/GetUser";
 
 function Billing() {
   const { state } = useLocation();
   const { auth_id } = useParams();
   const [cartItems, setCartItems] = useState([]);
+  // const [message, alert] = useState('');
+  const [user, setUser] = useState({});
+
 console.log("state : ",state);
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +44,19 @@ console.log("state : ",state);
     };
     fetchData();
   }, [state]);
+
+    const token = localStorage.getItem(auth_id);
+
+    useEffect(() => {
+      const fetchUser = async () => {
+        const userData = await GetUser(auth_id, token);
+        setUser(userData);
+      };
+    
+      fetchUser();
+    }, [auth_id]);
+
+    console.log("seller : ",user);
 
   const handleQuantityChange = (product_id, change) => {
     setCartItems((prevItems) =>
@@ -80,10 +98,10 @@ console.log("state : ",state);
         data: orderData,
       });
       console.log("Order placed successfully:", response.data);
-      alert("Order placed successfully!");
+      alert(response.data.message)
     } catch (error) {
       console.error("Error placing order:", error);
-      alert("Failed to place order. Please try again.");
+      alert(error.response.data.message);
     }
   };
 
@@ -134,7 +152,16 @@ console.log("state : ",state);
             ))}
           </div>
           <div>
-            <ul className="bg-gray-100 p-5 rounded">
+            <div className="space-y-5 py-5 border-b-2">
+              <div className="text-xl font-semibold border-b-2 pb-3">Delivery Address</div>
+              <div className="flex flex-col gap-3">
+                <span>{user.house_name}</span>
+                <span>{user.postal_area}</span>
+                <span>{user.pincode}</span>
+                <span>{user.state}</span>
+              </div>
+            </div>
+            <ul className="bg-gray-100 p-5 rounded my-5">
               <li className="flex justify-between border-b pb-2">
                 <span>Subtotal</span>
                 <span>
@@ -174,6 +201,7 @@ console.log("state : ",state);
         </div>
       </div>
       <Footer />
+      {/* <Toast message={message} /> */}
     </div>
   );
 }

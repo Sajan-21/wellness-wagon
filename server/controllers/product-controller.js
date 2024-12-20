@@ -221,25 +221,41 @@ exports.cart = async function(req, res) {
     try {
         let product_id = req.params.product_id;
         let id = req.params.auth_id;
-        await users.updateOne({_id : id},{$push : {cart_lists : product_id}});
+
+        // Check if the product is already in the user's cart
+        const user = await users.findOne({ _id: id, cart_lists: product_id });
+
+        if (user) {
+            let response = success_function({
+                success: false,
+                statusCode: 409,
+                message: "Product already in cart",
+            });
+            res.status(response.statusCode).send(response);
+            return;
+        }
+
+        // Add the product to the cart if not already present
+        await users.updateOne({ _id: id }, { $push: { cart_lists: product_id } });
         let response = success_function({
-            success : true,
-            statusCode : 200,
-            message : "product added to cart",
+            success: true,
+            statusCode: 200,
+            message: "Product added to cart",
         });
         res.status(response.statusCode).send(response);
         return;
     } catch (error) {
-        console.log("error : ",error);
+        console.log("error: ", error);
         let response = error_function({
-            success : false,
-            statusCode : 400,
-            message : error.message ? error.message : error
+            success: false,
+            statusCode: 400,
+            message: error.message ? error.message : error,
         });
         res.status(response.statusCode).send(response);
         return;
     }
 }
+
 
 exports.removeFromCart = async function(req, res) {
     try {
@@ -307,20 +323,35 @@ exports.wish_lists = async function(req, res) {
     try {
         let product_id = req.params.product_id;
         let id = req.params.auth_id;
-        await users.updateOne({_id : id},{$push : {wish_lists : product_id}});
+
+        // Check if the product is already in the user's wish list
+        const user = await users.findOne({ _id: id, wish_lists: product_id });
+
+        if (user) {
+            let response = success_function({
+                success: false,
+                statusCode: 409,
+                message: "Product already in wish list",
+            });
+            res.status(response.statusCode).send(response);
+            return;
+        }
+
+        // Add the product to the wish list if not already present
+        await users.updateOne({ _id: id }, { $push: { wish_lists: product_id } });
         let response = success_function({
-            success : true,
-            statusCode : 200,
-            message : "product added to wish list",
+            success: true,
+            statusCode: 200,
+            message: "Product added to wish list",
         });
         res.status(response.statusCode).send(response);
         return;
     } catch (error) {
-        console.log("error : ",error);
+        console.log("error: ", error);
         let response = error_function({
-            success : false,
-            statusCode : 400,
-            message : error.message ? error.message : error
+            success: false,
+            statusCode: 400,
+            message: error.message ? error.message : error,
         });
         res.status(response.statusCode).send(response);
         return;
@@ -390,7 +421,7 @@ exports.getWishListProducts = async function (req, res) {
     }
 }
 
-exports.buyProducts = async function(req, res) {
+exports.buyProducts = async function (req, res) {
     try {
         let buyer_id = req.params.auth_id;
         let body = req.body;
@@ -398,14 +429,25 @@ exports.buyProducts = async function(req, res) {
 
         // Fetch buyer
         let buyer = await users.findOne({ _id: buyer_id });
-        if (!buyer || !buyer.pincode || buyer.pincode == "not specified" || buyer.pincode == undefined || !buyer.house_name || buyer.house_name == "not specified" || !buyer.postal_area || buyer.postal_area == "not specified" || !buyer.state || buyer.state == "not specified") {
-            let response = error_function({
-                success: false,
-                statusCode: 400,
-                message: "something is missing in your address, please try again",
-            });
-            res.status(response.statusCode).send(response);
-            return;
+        if (
+            !buyer ||
+            !buyer.pincode ||
+            buyer.pincode === "not specified" ||
+            buyer.pincode === undefined ||
+            !buyer.house_name ||
+            buyer.house_name === "not specified" ||
+            !buyer.postal_area ||
+            buyer.postal_area === "not specified" ||
+            !buyer.state ||
+            buyer.state === "not specified"
+        ) {
+            return res.status(400).send(
+                error_function({
+                    success: false,
+                    statusCode: 400,
+                    message: "Something is missing in your address, please try again",
+                })
+            );
         }
 
         // Fetch products with quantity
@@ -423,8 +465,21 @@ exports.buyProducts = async function(req, res) {
         );
         console.log("orderProducts: ", productsWithQuantity);
 
-        // Fetch sellers
-        const sellerIds = [...new Set(productsWithQuantity.map(item => item.seller_id))];
+        // Check for out-of-stock products
+        const outOfStockProduct = productsWithQuantity.find(
+            (product) => product.stock_count === 0
+        );
+        if (outOfStockProduct) {
+            return res.status(400).send(
+                error_function({
+                    success: false,
+                    statusCode: 400,
+                    message: `The product "${outOfStockProduct.name}" is out of stock`,
+                })
+            );
+        }
+
+        const sellerIds = [...new Set(productsWithQuantity.map((item) => item.seller_id))];
         const sellers = await Promise.all(
             sellerIds.map(async (_id) => {
                 const seller = await users.findOne({ _id });
@@ -436,78 +491,47 @@ exports.buyProducts = async function(req, res) {
         );
         console.log("sellers : ", sellers);
 
-        // Process each product in order
-        await Promise.all(productsWithQuantity.map(async (product) => {
-            try {
+        // Process each product
+        await Promise.all(
+            productsWithQuantity.map(async (product) => {
                 let seller = await users.findOne({ _id: product.seller_id });
                 if (!seller) {
                     throw new Error(`Seller with ID ${product.seller_id} not found`);
                 }
 
-                if (product.stock_count === 0) {
-                    let response = error_function({
-                        success: false,
-                        statusCode: 400,
-                        message: "You can't buy this product, this product is out of stock",
-                    });
-                    res.status(response.statusCode).send(response);
-                    return;
-                } else if (product.stock_count === 1) {
-                    let out_of_stock_template = await outOfStockMail_template(seller, product);
-                    await sendEmail(seller.email, "out of stock", out_of_stock_template);
-                } else {
-                    // Notify seller about the new order
-                    // let order_email_template_seller = await orderMailSeller_template(buyer, product);
-                    // await sendEmail(seller.email, "new order", order_email_template_seller);
+                // Update stock and buyer's purchased products
+                let stock_count = product.stock_count - 1;
+                await products.updateOne({ _id: product._id }, { $set: { stock_count } });
+                await users.updateOne({ _id: buyer_id }, { $push: { products_bought: product._id } });
 
-                    // Notify admin and buyer about the order
-                    // let order_email_template_admin = await orderMailAdmin_template(buyer, seller, product);
-                    // await sendEmail("john@gmail.com", "new order", order_email_template_admin);
+                // Update seller's profit
+                let profit = Number(seller.profit) + product.price;
+                await users.updateOne({ _id: seller._id }, { $set: { profit } });
 
-                    // let order_email_template_buyer = await orderMailBuyer_template(buyer, product);
-                    // await sendEmail(buyer.email, "order placed", order_email_template_buyer);
+                // Notify users (emails can be uncommented if needed)
+            })
+        );
 
-                    // Update stock and buyer's purchased products
-                    let stock_count = product.stock_count - 1;
-                    await products.updateOne({ _id: product._id }, { $set: { stock_count: stock_count } });
-                    await users.updateOne({ _id: buyer_id }, { $push: { products_bought: product._id } });
-
-                    // Update seller's profit
-                    let profit = Number(seller.profit) + product.price;
-                    await users.updateOne({ _id: seller._id }, { $set: { profit } });
-                }
-            } catch (error) {
-                console.log("Error: ", error);
-            let response = error_function({
+        // Success response
+        return res.status(200).send(
+            success_function({
+                success: true,
+                statusCode: 200,
+                message: "Order placed successfully",
+            })
+        );
+    } catch (error) {
+        console.log("Error: ", error);
+        return res.status(400).send(
+            error_function({
                 success: false,
                 statusCode: 400,
                 message: error.message || error,
-            });
-            res.status(response.statusCode).send(response);
-            return;
-            }
-        }));
-
-        // Success response
-        let response = success_function({
-            success: true,
-            statusCode: 200,
-            message: "Order placed successfully",
-        });
-        res.status(response.statusCode).send(response);
-        return;
-
-    } catch (error) {
-        console.log("Error: ", error);
-        let response = error_function({
-            success: false,
-            statusCode: 400,
-            message: error.message || error,
-        });
-        res.status(response.statusCode).send(response);
-        return;
+            })
+        );
     }
-}
+};
+
 
 exports.getProuctsBought = async function (req, res) {
     try {

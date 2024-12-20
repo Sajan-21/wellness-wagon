@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Disclosure,
   DisclosureButton,
@@ -14,6 +14,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import useCheckLogin from "../check-login/useCheckLogin";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import Toast from "../toast/Toast";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -261,6 +262,7 @@ function Nav() {
           </div>
         </div>
       </div>
+      {/* <Toast message={message} /> */}
     </div>
   );
 }

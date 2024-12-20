@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import {
     Disclosure,
     DisclosureButton,
@@ -243,6 +243,7 @@ function CommonNav() {
             <div className="logo-font text-5xl text-white">WW</div>
            <button onClick={handleBack} className="text-slate-300 hover:text-white"><FontAwesomeIcon icon={faBackward} /> Back to Dashboard</button>
         </div>}
+        {/* <Toast message={message} /> */}
     </div>
   )
 }

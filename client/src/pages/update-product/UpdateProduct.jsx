@@ -3,6 +3,7 @@ import GetProduct from "../../components/get-product/GetProduct";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBackward } from "@fortawesome/free-solid-svg-icons";
+// import Toast from "../../components/toast/Toast";
 import axios from "axios";
 
 function UpdateProduct() {
@@ -14,6 +15,7 @@ function UpdateProduct() {
   const [stock_count, setStock_count] = useState();
   const [description, setDescription] = useState("");
   const [brand, setBrand] = useState();
+  // const [message, alert] = useState('');
 
   const [product, setProduct] = useState({
     name: "",
@@ -208,6 +210,7 @@ function UpdateProduct() {
           </div>
         </div>
       </form>
+      {/* <Toast message={message} /> */}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { React, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import './signup.css'
 import axios from 'axios';
+import Toast from '../../components/toast/Toast';
 
 function SignUp() {
     const navigate = useNavigate();
@@ -11,6 +12,7 @@ function SignUp() {
     const [password, setPassword] = useState('');
     const [user_role, setUser_role] = useState('');
     const [number, setNumber] = useState();
+    const [message, setMessage] = useState('');
 
     const handleSignUp = async function(event) {
         event.preventDefault();
@@ -36,7 +38,7 @@ function SignUp() {
             let token = data.token;
             localStorage.setItem(auth_id, token);
             navigate(`/${auth_id}/${user_type}`);
-            alert(response.data.message);
+            setMessage(response.data.message);
 
         } catch (error) {
             console.log("error : ",error);
@@ -162,6 +164,7 @@ function SignUp() {
           </p>
         </div>
       </div>
+      <Toast message={message} />
     </div>
   )
 }

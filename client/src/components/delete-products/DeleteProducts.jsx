@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios';
 
 async function DeleteProducts(token, auth_id, product_id) {
-
+console.log("hi")
     try {
         let response = await axios({
             method : "DELETE",

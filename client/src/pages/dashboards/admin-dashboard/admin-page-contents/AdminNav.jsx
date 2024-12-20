@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Disclosure,
   DisclosureButton,
@@ -13,6 +13,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import useCheckLogin from "../../../../components/check-login/useCheckLogin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+// import Toast from "../../../../components/toast/Toast";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -22,6 +23,7 @@ function AdminNav() {
   const navigate = useNavigate();
   const params = useParams();
   const checkLogin = useCheckLogin();
+  // const [message, alert] = useState('');
 
   const handleSignOut = () => {
     if (!checkLogin) {
@@ -93,6 +95,7 @@ function AdminNav() {
 
         <DisclosurePanel className="sm:hidden"></DisclosurePanel>
       </Disclosure>
+      {/* <Toast message={message} /> */}
     </div>
   );
 }

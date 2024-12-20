@@ -39,6 +39,7 @@ function App() {
           <Route path="/billing/:auth_id/:user_type/:product_id" element={<Billing />} />
           <Route path="/user-overview/:auth_id/:user_type/:user_id" exact element={<UserOverview />} />
           <Route path="/orders/:auth_id/:user_type/:user_id" exact element={<Orders />} />
+          <Route path="/orders/:auth_id/:user_type" exact element={<Orders />} />
           <Route path="/stocks/:auth_id/:user_type/:user_id" exact element={<Stocks />} />
           <Route path="/update-product/:auth_id/:user_type/:product_id" element={<UpdateProduct />} />
         </Routes>
