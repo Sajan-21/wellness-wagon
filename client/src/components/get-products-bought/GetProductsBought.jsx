@@ -10,7 +10,7 @@ async function GetProductsBought(token, user_id) {
         console.log("response from products_bought function : ",response);
         return response.data.data;
     } catch (error) {
-        console.log("error : ",error);
+        console.log("error from products_bought function : ",error);
         return error.response.data.message ? error.response.data.message : [];
     }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import GetProduct from "../../components/get-product/GetProduct";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,7 +11,9 @@ import GetUser from "../../components/get-user/GetUser";
 
 function Billing() {
   const { state } = useLocation();
-  const { auth_id } = useParams();
+  const navigate = useNavigate()
+  const params = useParams();
+  const auth_id = params.auth_id;
   const [cartItems, setCartItems] = useState([]);
   // const [message, alert] = useState('');
   const [user, setUser] = useState({});
@@ -98,7 +100,8 @@ console.log("state : ",state);
         data: orderData,
       });
       console.log("Order placed successfully:", response.data);
-      alert(response.data.message)
+      alert(response.data.message);
+      navigate(`/orders/${params.auth_id}/${params.user_type}`);
     } catch (error) {
       console.error("Error placing order:", error);
       alert(error.response.data.message);

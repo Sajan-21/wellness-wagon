@@ -67,12 +67,13 @@ export default function SellerDashboard() {
   const token = localStorage.getItem(auth_id);
 
   useEffect(() => {
-    const fetchOrders = () => {
-      const response = GetProductsBought(token, auth_id);
+    const fetchOrders = async() => {
+      const response = await GetProductsBought(token, auth_id);
       setProducts(response);
     }
     fetchOrders();
   },[token, auth_id]);
+  console.log("products from seller dashboard ", products);
 
   const updateContent = (key) => {
     setActiveContent(key);

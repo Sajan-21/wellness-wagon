@@ -46,6 +46,7 @@ export default function ProductsListing({ products, heading }) {
         const response = await AddToCart(params.auth_id, product_id);
         console.log("Response from AddToCart function:", response);
         alert(response);
+        window.location.reload();
       } catch (error) {
         console.error("Error adding to cart:", error);
         alert(error.response.data.message);
@@ -64,6 +65,7 @@ export default function ProductsListing({ products, heading }) {
         const response = await AddToWishList({ auth_id: params.auth_id, product_id });
         console.log("Response from wishlist function:", response);
         alert(response);
+        window.location.reload();
       } catch (error) {
         console.error("Error wishlist :", error);
         alert(error.response.data.message);

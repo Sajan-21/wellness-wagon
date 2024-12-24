@@ -457,6 +457,9 @@ exports.buyProducts = async function (req, res) {
                 if (!product) {
                     throw new Error(`Product with ID ${item.product_id} not found`);
                 }
+                if (item.quantity > product.stock_count) {
+                    throw new Error(`Requested quantity for \"${product.name}\" exceeds available stock.`);
+                }
                 return {
                     ...product.toObject(),
                     quantity: item.quantity,
@@ -474,7 +477,7 @@ exports.buyProducts = async function (req, res) {
                 error_function({
                     success: false,
                     statusCode: 400,
-                    message: `The product "${outOfStockProduct.name}" is out of stock`,
+                    message: `The product \"${outOfStockProduct.name}\" is out of stock`,
                 })
             );
         }
@@ -500,12 +503,12 @@ exports.buyProducts = async function (req, res) {
                 }
 
                 // Update stock and buyer's purchased products
-                let stock_count = product.stock_count - 1;
+                let stock_count = product.stock_count - product.quantity;
                 await products.updateOne({ _id: product._id }, { $set: { stock_count } });
                 await users.updateOne({ _id: buyer_id }, { $push: { products_bought: product._id } });
 
                 // Update seller's profit
-                let profit = Number(seller.profit) + product.price;
+                let profit = Number(seller.profit) + product.price * product.quantity;
                 await users.updateOne({ _id: seller._id }, { $set: { profit } });
 
                 // Notify users (emails can be uncommented if needed)
@@ -530,10 +533,10 @@ exports.buyProducts = async function (req, res) {
             })
         );
     }
-};
-
+}
 
 exports.getProuctsBought = async function (req, res) {
+    console.log("get Products req : ",req.params)
     try {
         const id = req.params.user_id;
         const user = await users.findOne({ _id: id });
@@ -542,6 +545,7 @@ exports.getProuctsBought = async function (req, res) {
             throw new Error("User or products_bought not found");
         }
         const products_bought = user.products_bought;
+        console.log("products_bought : ",products_bought)
 
         const get_products_bought = await Promise.all(
             products_bought.map(async (_id) => {
@@ -551,6 +555,7 @@ exports.getProuctsBought = async function (req, res) {
                 return product;
             })
         );
+        console.log("get_products_bought : ",get_products_bought)
 
         const response = success_function({
             success: true,
@@ -561,6 +566,7 @@ exports.getProuctsBought = async function (req, res) {
         res.status(response.statusCode).send(response);
         return;
     } catch (error) {
+        console.log("error from getProductsBought : ", error);
         const response = error_function({
             success: false,
             statusCode: 400,
