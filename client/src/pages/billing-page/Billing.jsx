@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIndianRupee } from "@fortawesome/free-solid-svg-icons";
 import CommonNav from "../../components/nav/common-nav/CommonNav";
 import Footer from "../../components/footer/Footer";
-// import Toast from "../../components/toast/Toast";
 import GetUser from "../../components/get-user/GetUser";
+import toast, { Toaster } from "react-hot-toast";
 
 function Billing() {
   const { state } = useLocation();
@@ -100,17 +100,18 @@ console.log("state : ",state);
         data: orderData,
       });
       console.log("Order placed successfully:", response.data);
-      alert(response.data.message);
+      toast.success(response.data.message);
       navigate(`/orders/${params.auth_id}/${params.user_type}`);
     } catch (error) {
       console.error("Error placing order:", error);
-      alert(error.response.data.message);
+      toast.error(error.response.data.message);
     }
   };
 
   console.log("cartItems : ",cartItems);
   return (
     <div className="bg-slate-200">
+      <Toaster />
       <CommonNav />
       <div className="w-4/5 mx-auto p-10 bg-white">
         <h1 className="text-3xl font-bold mb-5">Billing Details</h1>

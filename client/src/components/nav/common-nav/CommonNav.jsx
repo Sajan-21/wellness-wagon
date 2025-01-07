@@ -13,6 +13,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import useCheckLogin from '../../check-login/useCheckLogin';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faBackward } from '@fortawesome/free-solid-svg-icons';
+import toast, { Toaster } from 'react-hot-toast';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -45,7 +46,7 @@ function CommonNav() {
 
   const handleWishListPage = () => {
     if(!checkLogin){
-      alert("you are not able to continue without login/sign-up")
+      toast.error("you are not able to continue without login/sign-up")
     }else{
       navigate(`/wish-list/${params.auth_id}/${params.user_type}`);
     }
@@ -53,7 +54,7 @@ function CommonNav() {
 
   const handleCartPage = () => {
     if(!checkLogin){
-      alert("you are not able to continue without login/sign-up")
+      toast.error("you are not able to continue without login/sign-up")
     }else{
       navigate(`/cart/${params.auth_id}/${params.user_type}`);
     }
@@ -78,7 +79,7 @@ function CommonNav() {
       alert("you are not logged in to sign out");
     }else{
       localStorage.removeItem(params.auth_id);
-      alert("logged out");
+      toast.success("logged out");
       navigate('/');
     }
   }
@@ -89,6 +90,7 @@ function CommonNav() {
 
   return (
     <div>
+      <Toaster />
       {params.user_type !== "Admin" ? <Disclosure as="nav" className="bg-slate-500">
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">

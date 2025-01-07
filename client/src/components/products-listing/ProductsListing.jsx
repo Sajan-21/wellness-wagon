@@ -7,6 +7,7 @@ import AddToCart from "../add-to-cart/AddToCart";
 import useCheckLogin from "../check-login/useCheckLogin";
 import AddToWishList from "../add-to-wish-list/AddToWishList";
 import GetUser from "../get-user/GetUser";
+import toast, { Toaster } from "react-hot-toast";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -38,18 +39,17 @@ export default function ProductsListing({ products, heading }) {
   const handleCart = useCallback(
     async (product_id) => {
       if (!isLoggedIn) {
-        alert("You are not allowed to continue without login/sign-up");
+        toast.error("You are not allowed to continue without login/sign-up");
         return;
       }
 
       try {
         const response = await AddToCart(params.auth_id, product_id);
         console.log("Response from AddToCart function:", response);
-        alert(response);
         window.location.reload();
       } catch (error) {
         console.error("Error adding to cart:", error);
-        alert(error.response.data.message);
+        toast.error(error.response.data.message);
       }
     },
     [isLoggedIn, params.auth_id]
@@ -58,17 +58,16 @@ export default function ProductsListing({ products, heading }) {
   const handleWishList = useCallback(
     async (product_id) => {
       if (!isLoggedIn) {
-        alert("You are not allowed to continue without login/sign-up");
+        toast.error("You are not allowed to continue without login/sign-up");
         return;
       }
       try {
         const response = await AddToWishList({ auth_id: params.auth_id, product_id });
         console.log("Response from wishlist function:", response);
-        alert(response);
         window.location.reload();
       } catch (error) {
         console.error("Error wishlist :", error);
-        alert(error.response.data.message);
+        toast.error(error.response.data.message);
       }
     },
     [isLoggedIn, params.auth_id]
@@ -79,6 +78,7 @@ export default function ProductsListing({ products, heading }) {
 
   return (
     <div className="">
+      <Toaster />
       <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-10 lg:max-w-7xl lg:px-8">
         <div className="pb-10 text-4xl font-semibold nav-font">{heading}</div>
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
